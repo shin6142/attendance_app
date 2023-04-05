@@ -31,6 +31,12 @@ class Main
         $stmt->bindParam(':employee_id', $_ENV['FREEE_EMPLOYEE_ID'], PDO::PARAM_STR);
         $stmt->bindParam(':base_date', $base_date, PDO::PARAM_STR);
         $res = $stmt->execute();
+        if($res){
+            echo "DB取得に成功しました\n";
+        }else{
+            echo "DB取得に失敗しました\n";
+        }
+
         $last_record_type = 0;
         if( $res ) {
             $data = $stmt->fetchAll();
@@ -79,7 +85,11 @@ class Main
         $header = substr($response, 0, $header_size);
         $body = substr($response, $header_size);
         $result = json_decode($body, true);
-
+        if($result["ok"]){
+            echo("スラックに投稿に成功しました\n");
+        }else{
+            echo("スラック投稿に失敗しました\n");
+        }
 
         // 打刻時間をDBに保存
         $dsn = 'mysql:dbname=' . $_ENV['MYSQL_DATABASE'] . ';host=mysql_host';
@@ -109,8 +119,14 @@ class Main
         $stmt->bindParam(':type', $type, PDO::PARAM_STR);
         $stmt->bindParam(':base_date', $base_date, PDO::PARAM_STR);
         $stmt->bindParam(':datetime', $datetime, PDO::PARAM_STR);
-
         $res = $stmt->execute();
+        if($res){
+            echo "DB登録成功しました\n";
+        }else{
+            echo "DB登録に失敗しました\n";
+        }
+
+        echo("$datetime $statusArr[$type]\n");
     }
 
     /**

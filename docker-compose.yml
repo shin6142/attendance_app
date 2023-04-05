@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  php:
+    container_name: php_81
+    build:
+      context: .
+    volumes:
+      - ./:/var/www/html/
+    ports:
+      - 8000:80
+
+  db:
+    image: mysql:5.7
+    container_name: mysql_host
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - 4306:3306
+    volumes:
+      - ./initdb.d:/docker-entrypoint-initdb.d

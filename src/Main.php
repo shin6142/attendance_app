@@ -131,7 +131,7 @@ class Main
             die();
         }
 
-        $file = fopen('data.txt', 'w');
+        $file = fopen('../data.txt', 'w');
         $stmt = $pdo->prepare("SELECT * FROM attendance");
         $res = $stmt->execute();
         if( $res ) {

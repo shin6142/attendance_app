@@ -2,6 +2,11 @@
 
 require_once(__DIR__ . "/../vendor/autoload.php");
 
+use Monolog\Logger;
+use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\StreamHandler; 
+
+
 
 class Main
 {
@@ -11,7 +16,11 @@ class Main
         return 1;
     }
 
-    public static function record()
+    /**
+     * @param $mode
+     * 
+     */
+    public static function record(string $mode)
     {
         $dotenv = Dotenv\Dotenv::createImmutable("../");
         $dotenv->load();
@@ -23,7 +32,7 @@ class Main
         try {
             $pdo = new PDO($dsn, $user, $password);
         } catch (PDOException $e) {
-            print('Error:' . $e->getMessage());
+            new Exception($e->getMessage());
             die();
         }
         $base_date = date('Y-m-d');
@@ -31,10 +40,8 @@ class Main
         $stmt->bindParam(':employee_id', $_ENV['FREEE_EMPLOYEE_ID'], PDO::PARAM_STR);
         $stmt->bindParam(':base_date', $base_date, PDO::PARAM_STR);
         $res = $stmt->execute();
-        if($res){
-            echo "DB取得に成功しました\n";
-        }else{
-            echo "DB取得に失敗しました\n";
+        if(!$res){
+            throw new Exception('当日の打刻情報の取得に失敗しました');
         }
 
         $last_record_type = 0;
@@ -50,13 +57,15 @@ class Main
             exit;
         }
         $type = $last_record_type + 1;
+
         $statusArr = [
             0 => "テスト打刻です",
             1 => "開始します。",
             2 => "離席します。",
-            3 => "開始します。",
+            3 => "戻ります。",
             4 => "終了します。"
         ];
+
         $dotenv = Dotenv\Dotenv::createImmutable("../");
         $dotenv->load();
 
@@ -72,7 +81,7 @@ class Main
 
         $headers = ["Authorization: Bearer $token"];
 
-        //SLACK POSTリクエスト送信
+        // SLACK POSTリクエスト送信
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, 'https://slack.com/api/chat.postMessage');
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
@@ -85,10 +94,8 @@ class Main
         $header = substr($response, 0, $header_size);
         $body = substr($response, $header_size);
         $result = json_decode($body, true);
-        if($result["ok"]){
-            echo("スラックに投稿に成功しました\n");
-        }else{
-            echo("スラック投稿に失敗しました\n");
+        if(!$result["ok"]){
+            throw new Exception('スラック投稿に失敗しました');
         }
 
         // 打刻時間をDBに保存
@@ -98,39 +105,58 @@ class Main
         try {
             $pdo = new PDO($dsn, $user, $password);
         } catch (PDOException $e) {
-            print('Error:' . $e->getMessage());
+                throw new Exception($e->getMessage());
             die();
-        }
-
+            }
         date_default_timezone_set('Asia/Tokyo');
         $employee_id = $_ENV['FREEE_EMPLOYEE_ID'];
         $company_id = $_ENV['FREEE_COMPANY_ID'];
         $base_date = date('Y-m-d');
         $datetime = date('Y-m-d H:m:s');
-
         $stmt = $pdo->prepare("INSERT INTO attendance (
                 employee_id, company_id, type, base_date, datetime
             ) VALUES (
                 :employee_id, :company_id, :type, :base_date, :datetime
             )");
-
         $stmt->bindParam(':employee_id', $employee_id, PDO::PARAM_STR);
         $stmt->bindParam(':company_id', $company_id, PDO::PARAM_STR);
         $stmt->bindParam(':type', $type, PDO::PARAM_STR);
         $stmt->bindParam(':base_date', $base_date, PDO::PARAM_STR);
         $stmt->bindParam(':datetime', $datetime, PDO::PARAM_STR);
         $res = $stmt->execute();
-        if($res){
-            echo "DB登録成功しました\n";
-        }else{
-            echo "DB登録に失敗しました\n";
+        if(!$res){
+            throw new Exception('打刻情報のDB登録に失敗しました');
         }
 
-        echo("$datetime $statusArr[$type]\n");
+        $array = [
+            "employee_id" => $employee_id,
+            "company_id" => $company_id,
+            "type" => $type,
+            "base_date" => $base_date,
+            "datetime" => $datetime,
+        ];
+        $json = json_encode($array);
+
+        // タイムゾーン設定
+        date_default_timezone_set("Asia/Tokyo");
+        // フォーマッタの作成
+        $dateFormat = "Y-m-d H:i:s";
+        $output = "[%datetime%] %channel% %level_name% %message%\n";
+        $formatter = new LineFormatter($output, $dateFormat);
+
+        // ハンドラの作成
+        $stream = new StreamHandler('../logs/record.log', Logger::INFO); // ログレベルINFO以上のみ出力
+        $stream->setFormatter($formatter);
+
+        // ロガーオブジェクトの作成
+        $logger = new Logger('ATTENDANCE');
+        $logger->pushHandler($stream);
+
+        $logger->info($json); // 出力される
     }
 
     /**
-     * @return 
+     * DBに保存されている打刻データをテキストファイルにダンプする
      */
     static public function getAllAttendances(): void
     {
@@ -147,7 +173,7 @@ class Main
             die();
         }
 
-        $file = fopen('../data.txt', 'w');
+        $file = fopen('../dump.txt', 'w');
         $stmt = $pdo->prepare("SELECT * FROM attendance");
         $res = $stmt->execute();
         if( $res ) {

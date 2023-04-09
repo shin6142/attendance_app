@@ -16,11 +16,8 @@ class Main
         return 1;
     }
 
-    /**
-     * @param $mode
-     * 
-     */
-    public static function record(string $mode)
+
+    public static function record(int $company_id,int $employee_id)
     {
         $dotenv = Dotenv\Dotenv::createImmutable("../");
         $dotenv->load();
@@ -33,11 +30,11 @@ class Main
             $pdo = new PDO($dsn, $user, $password);
         } catch (PDOException $e) {
             new Exception($e->getMessage());
-            die();
         }
         $base_date = date('Y-m-d');
-        $stmt = $pdo->prepare("SELECT * FROM attendance WHERE employee_id = :employee_id AND base_date = :base_date ORDER BY type");
-        $stmt->bindParam(':employee_id', $_ENV['FREEE_EMPLOYEE_ID'], PDO::PARAM_STR);
+        $stmt = $pdo->prepare("SELECT * FROM attendance WHERE company_id = :company_id AND employee_id = :employee_id AND base_date = :base_date ORDER BY type");
+        $stmt->bindParam(':company_id', $company_id, PDO::PARAM_STR);
+        $stmt->bindParam(':employee_id', $employee_id, PDO::PARAM_STR);
         $stmt->bindParam(':base_date', $base_date, PDO::PARAM_STR);
         $res = $stmt->execute();
         if(!$res){
@@ -105,12 +102,9 @@ class Main
         try {
             $pdo = new PDO($dsn, $user, $password);
         } catch (PDOException $e) {
-                throw new Exception($e->getMessage());
-            die();
-            }
+            throw new Exception($e->getMessage());
+        }
         date_default_timezone_set('Asia/Tokyo');
-        $employee_id = $_ENV['FREEE_EMPLOYEE_ID'];
-        $company_id = $_ENV['FREEE_COMPANY_ID'];
         $base_date = date('Y-m-d');
         $datetime = date('Y-m-d H:m:s');
         $stmt = $pdo->prepare("INSERT INTO attendance (
@@ -169,8 +163,7 @@ class Main
         try {
             $pdo = new PDO($dsn, $user, $password);
         } catch (PDOException $e) {
-            print('Error:' . $e->getMessage());
-            die();
+            throw new Exception($e->getMessage());
         }
 
         $file = fopen('../dump.txt', 'w');

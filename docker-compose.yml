@@ -2,7 +2,7 @@ version: '3'
 
 services:
   php:
-    container_name: php_81
+    container_name: php
     build:
       context: .
     volumes:
@@ -12,7 +12,7 @@ services:
 
   db:
     image: mysql:5.7
-    container_name: mysql_host
+    container_name: mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}

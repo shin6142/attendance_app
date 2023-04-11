@@ -7,7 +7,7 @@ require_once(__DIR__ . "/../vendor/autoload.php");
 $dotenv = Dotenv\Dotenv::createImmutable("../");
 $dotenv->load();
 
-$dsn = 'mysql:dbname=' . $_ENV['MYSQL_DATABASE'] . ';host=mysql_host';
+$dsn = 'mysql:dbname=' . $_ENV['MYSQL_DATABASE'] . ';host=mysql';
 $user = $_ENV['MYSQL_USER'];
 $password = $_ENV['MYSQL_PASSWORD'];
 try {

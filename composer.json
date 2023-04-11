@@ -4,6 +4,8 @@
     },
     "require": {
         "vlucas/phpdotenv": "^5.5",
-        "monolog/monolog": "^3.3"
+        "monolog/monolog": "^3.3",
+        "ext-pdo": "*",
+        "ext-curl": "*"
     }
 }

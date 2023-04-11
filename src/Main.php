@@ -17,19 +17,22 @@ class Main
     }
 
 
-    public static function record(int $company_id,int $employee_id)
+    /**
+     * @throws Exception
+     */
+    public static function record(int $company_id, int $employee_id)
     {
         $dotenv = Dotenv\Dotenv::createImmutable("../");
         $dotenv->load();
 
         //DBから当日の打刻履歴を取得
-        $dsn = 'mysql:dbname=' . $_ENV['MYSQL_DATABASE'] . ';host=mysql_host';
+        $dsn = 'mysql:dbname=' . $_ENV['MYSQL_DATABASE'] . ';host=mysql';
         $user = $_ENV['MYSQL_USER'];
         $password = $_ENV['MYSQL_PASSWORD'];
         try {
             $pdo = new PDO($dsn, $user, $password);
         } catch (PDOException $e) {
-            new Exception($e->getMessage());
+            throw new Exception($e->getMessage());
         }
         $base_date = date('Y-m-d');
         $stmt = $pdo->prepare("SELECT * FROM attendance WHERE company_id = :company_id AND employee_id = :employee_id AND base_date = :base_date ORDER BY type");
@@ -42,14 +45,13 @@ class Main
         }
 
         $last_record_type = 0;
-        if( $res ) {
-            $data = $stmt->fetchAll();
-            foreach($data as $d){
-                if($last_record_type < $d["type"]){
-                    $last_record_type = $d["type"];
-                }
+        $data = $stmt->fetchAll();
+        foreach($data as $d){
+            if($last_record_type < $d["type"]){
+                $last_record_type = $d["type"];
             }
         }
+
         if($last_record_type == 4){
             exit;
         }
@@ -96,7 +98,7 @@ class Main
         }
 
         // 打刻時間をDBに保存
-        $dsn = 'mysql:dbname=' . $_ENV['MYSQL_DATABASE'] . ';host=mysql_host';
+        $dsn = 'mysql:dbname=' . $_ENV['MYSQL_DATABASE'] . ';host=mysql';
         $user = $_ENV['MYSQL_USER'];
         $password = $_ENV['MYSQL_PASSWORD'];
         try {
@@ -157,7 +159,7 @@ class Main
         $dotenv = Dotenv\Dotenv::createImmutable("../");
         $dotenv->load();
 
-        $dsn = 'mysql:dbname=' . $_ENV['MYSQL_DATABASE'] . ';host=mysql_host';
+        $dsn = 'mysql:dbname=' . $_ENV['MYSQL_DATABASE'] . ';host=mysql';
         $user = $_ENV['MYSQL_USER'];
         $password = $_ENV['MYSQL_PASSWORD'];
         try {

@@ -16,12 +16,12 @@ try{
     }
     Main::record((int)$company_id, (int)$employee_id);
     $result['success'] = true;
+    header("HTTP/1.1 200 OK");
 }catch(Exception $e){
     header('HTTP/1.1 500 Internal Server Error');
     $result["error"] = $e->getMessage();
 }
 
-header("HTTP/1.1 200 OK");
 header('Content-Type: application/json');
 echo json_encode($result);
 exit;

@@ -4,8 +4,7 @@ require_once(__DIR__ . "/../../../../vendor/autoload.php");
 
 use Monolog\Logger;
 use Monolog\Formatter\LineFormatter;
-use Monolog\Handler\StreamHandler; 
-
+use Monolog\Handler\StreamHandler;
 
 
 class Main
@@ -40,19 +39,19 @@ class Main
         $stmt->bindParam(':employee_id', $employee_id, PDO::PARAM_STR);
         $stmt->bindParam(':base_date', $base_date, PDO::PARAM_STR);
         $res = $stmt->execute();
-        if(!$res){
+        if (!$res) {
             throw new Exception('当日の打刻情報の取得に失敗しました');
         }
 
         $last_record_type = 0;
         $data = $stmt->fetchAll();
-        foreach($data as $d){
-            if($last_record_type < $d["type"]){
+        foreach ($data as $d) {
+            if ($last_record_type < $d["type"]) {
                 $last_record_type = $d["type"];
             }
         }
 
-        if($last_record_type == 4){
+        if ($last_record_type == 4) {
             exit;
         }
         $type = $last_record_type + 1;
@@ -93,7 +92,7 @@ class Main
         $header = substr($response, 0, $header_size);
         $body = substr($response, $header_size);
         $result = json_decode($body, true);
-        if(!$result["ok"]){
+        if (!$result["ok"]) {
             throw new Exception('スラック投稿に失敗しました');
         }
 
@@ -120,7 +119,7 @@ class Main
         $stmt->bindParam(':base_date', $base_date, PDO::PARAM_STR);
         $stmt->bindParam(':datetime', $datetime, PDO::PARAM_STR);
         $res = $stmt->execute();
-        if(!$res){
+        if (!$res) {
             throw new Exception('打刻情報のDB登録に失敗しました');
         }
 
@@ -152,7 +151,7 @@ class Main
     }
 
     /**
-     * 
+     *
      */
     static public function get(int $company_id, int $employee_id, string $base_date): array
     {
@@ -176,17 +175,16 @@ class Main
         $res = $stmt->execute();
         $data = [];
         $result = [];
-        if( $res ) {
+        if ($res) {
             $data = $stmt->fetchAll();
         }
-        foreach ($data as $key => $d){
-            $result[$key]['employee_id'] = $d['employee_id'];
-            $result[$key]['company_id'] = $d['company_id'];
-            $result[$key]['type'] = $d['type'];
-            $result[$key]['base_date'] = $d['base_date'];
-            $result[$key]['datetime'] = $d['datetime'];
-        }
+        $result['employee_id'] = $data[0]['employee_id'];
+        $result['company_id'] = $data[0]['company_id'];
+        $result['base_date'] = $data[0]['base_date'];
 
+        foreach ($data as $key => $d) {
+            $result[$d['type']] = $d['datetime'];
+        }
 
         return $result;
     }

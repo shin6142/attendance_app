@@ -152,9 +152,9 @@ class Main
     }
 
     /**
-     * DBに保存されている打刻データをテキストファイルにダンプする
+     * DBに保存されている打刻データを全取得する
      */
-    static public function getAllAttendances(): void
+    static public function getAllAttendances(): array
     {
         $dotenv = Dotenv\Dotenv::createImmutable("../");
         $dotenv->load();
@@ -173,11 +173,7 @@ class Main
         $res = $stmt->execute();
         if( $res ) {
             $data = $stmt->fetchAll();
-            foreach($data as $d){
-                $datetime = new DateTimeImmutable($d["datetime"]);
-                fwrite($file, $d["id"] . ' ' . $d["base_date"] . ' ' . $datetime->format('H:i:s') . "\n");
-            }
         }
-        fclose($file);
+        return $data;
     }
 }

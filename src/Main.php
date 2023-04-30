@@ -168,7 +168,6 @@ class Main
             throw new Exception($e->getMessage());
         }
 
-        $file = fopen('../dump.txt', 'w');
         $stmt = $pdo->prepare("SELECT * FROM attendance");
         $res = $stmt->execute();
         if( $res ) {

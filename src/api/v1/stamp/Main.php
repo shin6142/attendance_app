@@ -179,15 +179,14 @@ class Main
         if( $res ) {
             $data = $stmt->fetchAll();
         }
+        $result['employee_id'] = $data[0]['employee_id'];
+        $result['company_id'] = $data[0]['company_id'];
+        $result['base_date'] = $data[0]['base_date'];
+
         foreach ($data as $key => $d){
-            $result[$key]['employee_id'] = $d['employee_id'];
-            $result[$key]['company_id'] = $d['company_id'];
-            $result[$key]['type'] = $d['type'];
-            $result[$key]['base_date'] = $d['base_date'];
-            $result[$key]['datetime'] = $d['datetime'];
+            $result[$d['type']] = $d['datetime'];
         }
-
-
+        
         return $result;
     }
 }

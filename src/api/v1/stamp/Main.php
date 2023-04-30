@@ -182,8 +182,21 @@ class Main
         $result['company_id'] = $data[0]['company_id'];
         $result['base_date'] = $data[0]['base_date'];
 
-        foreach ($data as $key => $d) {
-            $result[$d['type']] = $d['datetime'];
+        foreach ($data as $d) {
+            $type = $d['type'];
+            switch ($type){
+                case 1:
+                    $result['start_datetime'] = $d['datetime'];
+                    break;
+                case 2:
+                    $result['leave_datetime'] = $d['datetime'];
+                    break;
+                case 3:
+                    $result['back_datetime'] = $d['datetime'];
+                    break;
+                case 4:
+                    $result['end_datetime'] = $d['datetime'];
+            }
         }
 
         return $result;

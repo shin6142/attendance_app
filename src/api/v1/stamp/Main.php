@@ -174,9 +174,20 @@ class Main
         $stmt->bindParam(':base_date', $base_date, PDO::PARAM_STR);
 
         $res = $stmt->execute();
+        $data = [];
+        $result = [];
         if( $res ) {
             $data = $stmt->fetchAll();
         }
-        return $data;
+        foreach ($data as $key => $d){
+            $result[$key]['employee_id'] = $d['employee_id'];
+            $result[$key]['company_id'] = $d['company_id'];
+            $result[$key]['type'] = $d['type'];
+            $result[$key]['base_date'] = $d['base_date'];
+            $result[$key]['datetime'] = $d['datetime'];
+        }
+
+
+        return $result;
     }
 }

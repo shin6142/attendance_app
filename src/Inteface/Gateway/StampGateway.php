@@ -1,8 +1,8 @@
 <?php
 
-namespace AttendanceApp\Src\Domain\Repository;
+namespace AttendanceApp\Src\Inteface\Gateway;
 
-interface IStampRepository
+interface StampGateway
 {
     /**
      * @param int $companyId

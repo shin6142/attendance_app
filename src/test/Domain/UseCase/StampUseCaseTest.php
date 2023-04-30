@@ -4,24 +4,24 @@ namespace AttendanceApp\Src\test\Domain\UseCase;
 
 require_once(__DIR__ . "/../../../../vendor/autoload.php");
 
-use AttendanceApp\Src\Domain\Repository\IStampRepository;
 use AttendanceApp\Src\Domain\UseCase\StampUseCase;
+use AttendanceApp\Src\Inteface\Gateway\StampGateway;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class StampUseCaseTest extends TestCase
 {
-    /** @var IStampRepository&MockObject */
-    private IStampRepository $repositoryMock;
+    /** @var StampGateway&MockObject */
+    private StampGateway $gatewayMock;
 
     /** @var StampUseCase*/
-    private StampUseCase $stampUseCase;
+    private StampUseCase $useCase;
 
 
     public function setUp(): void
     {
-        $this->repositoryMock  = $this->createMock(IStampRepository::class);
-        $this->useCase = new StampUseCase($this->repositoryMock);
+        $this->gatewayMock  = $this->createMock(StampGateway::class);
+        $this->useCase = new StampUseCase($this->gatewayMock);
     }
 
     public function test_get()
@@ -31,7 +31,7 @@ class StampUseCaseTest extends TestCase
         $employee_id = 1164735;
         $base_date = '2023-04-29';
         //when
-        $actual = $this->useCase->get($company_id, $employee_id, $base_date);
+        $actual = $this->useCase->getBy($company_id, $employee_id, $base_date);
         //then
         $expected = [
             [
@@ -81,7 +81,7 @@ class StampUseCaseTest extends TestCase
             ]
         ];
 
-        $this->repositoryMock->expects($this->once())
+        $this->gatewayMock->expects($this->once())
             ->method('findBy')
             ->with(
                 $company_id,
@@ -91,7 +91,7 @@ class StampUseCaseTest extends TestCase
             ->willReturn($expected);
 
         //when
-        $actual = $this->useCase->getNew($company_id, $employee_id, $base_date);
+        $actual = $this->useCase->getByNew($company_id, $employee_id, $base_date);
         $this->assertEquals($expected, $actual);
     }
 }

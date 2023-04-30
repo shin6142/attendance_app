@@ -2,7 +2,7 @@
 
 namespace AttendanceApp\Src\Domain\UseCase;
 
-use AttendanceApp\src\Domain\Repository\IStampRepository;
+use AttendanceApp\Src\Inteface\Gateway\StampGateway;
 use Dotenv\Dotenv;
 use Exception;
 use PDO;
@@ -11,7 +11,7 @@ use PDOException;
 class StampUseCase
 {
 
-    public function __construct(private readonly IStampRepository $StampRepository)
+    public function __construct(private readonly StampGateway $StampRepository)
     {
     }
 
@@ -22,7 +22,7 @@ class StampUseCase
      * @return array
      * @throws Exception
      */
-    static public function get(int $company_id, int $employee_id, string $base_date): array
+    static public function getBy(int $company_id, int $employee_id, string $base_date): array
     {
         $dotenv = Dotenv::createImmutable(__DIR__ . "/../../../");
         $dotenv->load();
@@ -48,7 +48,7 @@ class StampUseCase
         return $data;
     }
 
-    public function getNew(int $company_id, int $employee_id, string $base_date): array
+    public function getByNew(int $company_id, int $employee_id, string $base_date): array
     {
         return $this->StampRepository->findBy($company_id, $employee_id, $base_date);
     }

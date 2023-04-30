@@ -21,3 +21,10 @@ CREATE TABLE `token` (
   `issued_unix_datetime` int(10) NOT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+INSERT INTO `attendance` (`employee_id`, `company_id`, `type`, `base_date`, `datetime`)
+VALUES
+    (1164735, 1884310, '1', '2023-04-30', '2023-04-30 12:04:06'),
+    (1164735, 1884310, '2', '2023-04-30', '2023-04-30 13:04:06'),
+    (1164735, 1884310, '3', '2023-04-30', '2023-04-30 14:04:06'),
+    (1164735, 1884310, '4', '2023-04-30', '2023-04-30 15:04:06');

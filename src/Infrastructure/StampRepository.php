@@ -2,13 +2,15 @@
 
 namespace AttendanceApp\Src\Infrastructure\Gateway;
 
+use AttendanceApp\Src\Domain\Model\Stamp;
+use AttendanceApp\Src\Domain\Model\Stamps;
 use AttendanceApp\Src\Inteface\Gateway\StampGateway;
 use Dotenv\Dotenv;
 
 class StampRepository implements StampGateway
 {
 
-    public function findBy(int $companyId, int $employeeId, string $date): array
+    public function findByDate(int $companyId, int $employeeId, string $date): Stamps
     {
         $dotenv = Dotenv::createImmutable(__DIR__ . "/../../");
         $dotenv->load();
@@ -29,18 +31,21 @@ class StampRepository implements StampGateway
 
         $res = $stmt->execute();
         $data = [];
-        $result = [];
         if( $res ) {
             $data = $stmt->fetchAll();
         }
-        foreach ($data as $key => $d){
-            $result[$key]['employee_id'] = $d['employee_id'];
-            $result[$key]['company_id'] = $d['company_id'];
-            $result[$key]['type'] = $d['type'];
-            $result[$key]['base_date'] = $d['base_date'];
-            $result[$key]['datetime'] = $d['datetime'];
+        $list = [];
+        foreach ($data as $d){
+            $stamp = Stamp::create(
+                $d['company_id'],
+                $d['employee_id'],
+                $d['type'],
+                $d['base_date'],
+                $d['datetime'],
+            );
+            $list[] = $stamp;
         }
 
-        return $result;
+        return new Stamps($list);
     }
 }

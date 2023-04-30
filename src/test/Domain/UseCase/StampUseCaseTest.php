@@ -5,6 +5,8 @@ namespace AttendanceApp\Src\test\Domain\UseCase;
 require_once(__DIR__ . "/../../../../vendor/autoload.php");
 
 use AttendanceApp\Src\Domain\Model\Stamp;
+use AttendanceApp\Src\Domain\Model\Stamps;
+use AttendanceApp\Src\Domain\UseCase\DailyStampsDto;
 use AttendanceApp\Src\Domain\UseCase\StampUseCase;
 use AttendanceApp\Src\Inteface\Gateway\StampGateway;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -25,35 +27,46 @@ class StampUseCaseTest extends TestCase
         $this->useCase = new StampUseCase($this->gatewayMock);
     }
 
-    public function test_getBy()
+    public function test_getByDate()
     {
         //given
-        $company_id = 1884310;
-        $employee_id = 1164735;
-        $type = 1;
-        $base_date = '2023-04-29';
-        $date_time = "2023-04-29 21:04:20";
-        //then
+        $companyId = 1;
+        $employeeId = 1;
+        $date = '2023-04-29';
+        $startDateTime = "2023-04-29 8:04:20";
+        $leaveDateTime = "2023-04-29 12:04:20";
+        $backDateTime = "2023-04-29 13:04:20";
+        $endDateTime = "2023-04-29 18:04:20";
 
-        $expected = Stamp::create(
-            $company_id,
-            $employee_id,
-            $type,
-            $base_date,
-            $date_time
-        );
+        //then
+        $stampArr = [
+            Stamp::create($companyId,$employeeId,1, $date, $startDateTime),
+            Stamp::create($companyId,$employeeId,2, $date, $leaveDateTime),
+            Stamp::create($companyId,$employeeId,3, $date, $backDateTime),
+            Stamp::create($companyId,$employeeId,4, $date, $endDateTime)
+        ];
+        $stamps = new Stamps($stampArr);
 
         $this->gatewayMock->expects($this->once())
-            ->method('findBy')
+            ->method('findByDate')
             ->with(
-                $company_id,
-                $employee_id,
-                $base_date
+                $companyId,
+                $employeeId,
+                $date
             )
-            ->willReturn($expected);
+            ->willReturn($stamps);
 
         //when
-        $actual = $this->useCase->getBy($company_id, $employee_id, $base_date);
+        $expected = new DailyStampsDto(
+            $companyId,
+            $employeeId,
+            $date,
+            $startDateTime,
+            $leaveDateTime,
+            $backDateTime,
+            $endDateTime,
+        );
+        $actual = $this->useCase->getByDate($companyId, $employeeId, $date);
         $this->assertEquals($expected, $actual);
     }
 }

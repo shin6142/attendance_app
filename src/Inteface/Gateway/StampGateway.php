@@ -2,7 +2,7 @@
 
 namespace AttendanceApp\Src\Inteface\Gateway;
 
-use AttendanceApp\Src\Domain\Model\Stamp;
+use AttendanceApp\Src\Domain\Model\Stamps;
 
 interface StampGateway
 {
@@ -10,7 +10,7 @@ interface StampGateway
      * @param int $companyId
      * @param int $employeeId
      * @param string $date
-     * @return array
+     * @return Stamps
      */
-    public function findBy(int $companyId, int $employeeId, string $date): Stamp;
+    public function findByDate(int $companyId, int $employeeId, string $date): Stamps;
 }

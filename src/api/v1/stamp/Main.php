@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-require_once(__DIR__ . "/../vendor/autoload.php");
+require_once(__DIR__ . "/../../../../vendor/autoload.php");
 
 use Monolog\Logger;
 use Monolog\Formatter\LineFormatter;
@@ -152,11 +152,11 @@ class Main
     }
 
     /**
-     * DBに保存されている打刻データを全取得する
+     * 
      */
-    static public function getAllAttendances(): array
+    static public function get(int $company_id, int $employee_id, string $base_date): array
     {
-        $dotenv = Dotenv\Dotenv::createImmutable("../");
+        $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . "/../../../../");
         $dotenv->load();
 
         $dsn = 'mysql:dbname=' . $_ENV['MYSQL_DATABASE'] . ';host=mysql';
@@ -168,7 +168,11 @@ class Main
             throw new Exception($e->getMessage());
         }
 
-        $stmt = $pdo->prepare("SELECT * FROM attendance");
+        $stmt = $pdo->prepare("SELECT * FROM attendance WHERE company_id = :company_id AND employee_id = :employee_id AND base_date = :base_date ORDER BY type");
+        $stmt->bindParam(':company_id', $company_id, PDO::PARAM_STR);
+        $stmt->bindParam(':employee_id', $employee_id, PDO::PARAM_STR);
+        $stmt->bindParam(':base_date', $base_date, PDO::PARAM_STR);
+
         $res = $stmt->execute();
         if( $res ) {
             $data = $stmt->fetchAll();

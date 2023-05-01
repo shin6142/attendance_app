@@ -10,7 +10,7 @@ class StampController
 {
     public function __construct(private readonly StampUseCase $useCase){}
 
-    public function getStampsByDate(int $companyId, int $employeeId, string $date): Array
+    public function getStampsByDate(int $companyId, int $employeeId, string $date): array
     {
         $dto = $this->useCase->getByDate($companyId, $employeeId, $date);
         $result['employee_id'] = $dto->getEmployeeId();

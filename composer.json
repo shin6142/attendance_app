@@ -6,7 +6,9 @@
         "vlucas/phpdotenv": "^5.5",
         "monolog/monolog": "^3.3",
         "ext-pdo": "*",
-        "ext-curl": "*"
+        "ext-curl": "*",
+        "php-di/php-di": "^7.0",
+        "doctrine/annotations": "^2.0"
     },
     "autoload": {
         "psr-4": {

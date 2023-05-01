@@ -52,8 +52,8 @@ class StampUseCase
             }
         }
         return new DailyStampsDto(
-            $companyId,
             $employeeId,
+            $companyId,
             $date,
             $startDateTime,
             $leaveDateTime,

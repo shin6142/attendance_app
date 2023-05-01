@@ -1,18 +1,21 @@
 <?php
 
-namespace AttendanceApp\Src\Infrastructure\Gateway;
+namespace AttendanceApp\Src\Inteface\Database;
 
 use AttendanceApp\Src\Domain\Model\Stamp;
 use AttendanceApp\Src\Domain\Model\Stamps;
 use AttendanceApp\Src\Inteface\Gateway\StampGateway;
 use Dotenv\Dotenv;
+use Exception;
+use PDO;
+use PDOException;
 
 class StampRepository implements StampGateway
 {
 
     public function findByDate(int $companyId, int $employeeId, string $date): Stamps
     {
-        $dotenv = Dotenv::createImmutable(__DIR__ . "/../../");
+        $dotenv = Dotenv::createImmutable(__DIR__ . '/../../../');
         $dotenv->load();
 
         $dsn = 'mysql:dbname=' . $_ENV['MYSQL_DATABASE'] . ';host=mysql';

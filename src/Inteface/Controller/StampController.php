@@ -2,9 +2,7 @@
 
 namespace AttendanceApp\Src\Inteface\Controller;
 
-use AttendanceApp\Src\Domain\UseCase\DailyStampsDto;
 use AttendanceApp\Src\Domain\UseCase\StampUseCase;
-use PhpParser\Node\Expr\Array_;
 
 class StampController
 {

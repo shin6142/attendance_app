@@ -3,6 +3,7 @@
 require_once __DIR__ . "/../../../../vendor/autoload.php";
 
 use AttendanceApp\Src\Infrastructure\Injector\Injector;
+use AttendanceApp\Src\Inteface\Controller\Request;
 
 
 $result['success'] = false;
@@ -21,9 +22,9 @@ try{
     if(!isset($base_date)){
         throw new Exception('打刻日を指定してください');
     }
-
+    $request = Request::create($_REQUEST);
     $controller = Injector::getStampController();
-    $result["content"] = $controller->getStampsByDate($company_id, $employee_id, $base_date);
+    $result["content"] = $controller->getStampsByDate($request);
     $result['success'] = true;
     header("HTTP/1.1 200 OK");
 }catch(Throwable $e){

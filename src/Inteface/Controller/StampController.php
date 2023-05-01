@@ -10,9 +10,13 @@ class StampController
 {
     public function __construct(private readonly StampUseCase $useCase){}
 
-    public function getStampsByDate(int $companyId, int $employeeId, string $date): array
+    public function getStampsByDate(Request $request): array
     {
-        $dto = $this->useCase->getByDate($companyId, $employeeId, $date);
+        $dto = $this->useCase->getByDate(
+            $request->getCompanyId(),
+            $request->getEmployeeId(),
+            $request->getBaseDate()
+        );
         $result['employee_id'] = $dto->getEmployeeId();
         $result['company_id'] = $dto->getCompanyId();
         $result['base_date'] = $dto->getDate();

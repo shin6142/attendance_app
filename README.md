@@ -26,7 +26,7 @@ php                 attendance_app-php   "docker-php-entrypoi…"   php         
 
 依存ライブラリをコンテナ内にインストールします
 ```
-docker compose up -d --build
+docker compose exec codmon bash
 composer install
 ```
 

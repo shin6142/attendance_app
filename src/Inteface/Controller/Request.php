@@ -4,18 +4,16 @@ namespace AttendanceApp\Src\Inteface\Controller;
 
 class Request
 {
-    private function __construct(
-        private readonly int $companyId,
-        private readonly int $employeeId,
-        private readonly string $baseDate,
-    ){}
 
-    public static function create(array $request): Request
+    private readonly int $companyId;
+    private readonly int $employeeId;
+    private readonly string $baseDate;
+
+    public function __construct(int $companyId, int $employeeId, string $baseDate)
     {
-        $company_id = $request['company_id'];
-        $employee_id = $request['employee_id'];
-        $base_date = $request['base_date'];
-        return new self($company_id, $employee_id, $base_date);
+        $this->companyId = $companyId;
+        $this->employeeId = $employeeId;
+        $this->baseDate = $baseDate;
     }
 
     /**
@@ -41,4 +39,5 @@ class Request
     {
         return $this->baseDate;
     }
+
 }

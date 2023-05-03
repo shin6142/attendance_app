@@ -25,4 +25,11 @@ class StampController
 
         return $result;
     }
+
+    public function record(ClockInRequest $request): void
+    {
+        $dot
+        $dto = $this->useCase->record();
+
+    }
 }

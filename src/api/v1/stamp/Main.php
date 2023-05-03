@@ -21,7 +21,7 @@ class Main
      */
     public static function record(int $company_id, int $employee_id)
     {
-        $dotenv = Dotenv\Dotenv::createImmutable("../");
+        $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . "/../../../../");
         $dotenv->load();
 
         //DBから当日の打刻履歴を取得
@@ -64,7 +64,7 @@ class Main
             4 => "終了します。"
         ];
 
-        $dotenv = Dotenv\Dotenv::createImmutable("../");
+        $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . "/../../../../");
         $dotenv->load();
 
         $token = $_ENV['SLACK_TOKEN'];

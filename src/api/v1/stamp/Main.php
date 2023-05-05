@@ -2,6 +2,7 @@
 
 require_once(__DIR__ . "/../../../../vendor/autoload.php");
 
+use Monolog\Level;
 use Monolog\Logger;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
@@ -140,13 +141,12 @@ class Main
         $formatter = new LineFormatter($output, $dateFormat);
 
         // ハンドラの作成
-        $stream = new StreamHandler('../logs/record.log', Logger::INFO); // ログレベルINFO以上のみ出力
+        $stream = new StreamHandler(__DIR__ . '/../../../../logs/record.log', Level::Info); // ログレベルINFO以上のみ出力
         $stream->setFormatter($formatter);
 
         // ロガーオブジェクトの作成
         $logger = new Logger('ATTENDANCE');
         $logger->pushHandler($stream);
-
         $logger->info($json); // 出力される
     }
 

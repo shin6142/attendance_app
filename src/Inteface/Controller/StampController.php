@@ -8,7 +8,7 @@ class StampController
 {
     public function __construct(private readonly StampUseCase $useCase){}
 
-    public function getStampsByDate(Request $request): array
+    public function getStampsByDate(GetRequest $request): array
     {
         $dto = $this->useCase->getByDate(
             $request->getCompanyId(),
@@ -26,10 +26,5 @@ class StampController
         return $result;
     }
 
-    public function record(ClockInRequest $request): void
-    {
-        $dot
-        $dto = $this->useCase->record();
-
-    }
+    public function record(ClockInRequest $request): void{}
 }

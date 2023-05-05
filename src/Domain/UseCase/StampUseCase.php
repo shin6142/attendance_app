@@ -3,12 +3,9 @@
 namespace AttendanceApp\Src\Domain\UseCase;
 
 use AttendanceApp\Src\Inteface\Gateway\StampGateway;
+use AttendanceApp\Src\Inteface\Logger\Log;
 use Dotenv\Dotenv;
 use Exception;
-use Monolog\Formatter\LineFormatter;
-use Monolog\Handler\StreamHandler;
-use Monolog\Level;
-use Monolog\Logger;
 use PDO;
 use PDOException;
 
@@ -67,9 +64,9 @@ class StampUseCase
     /**
      * @throws Exception
      */
-    public static function record(int $company_id, int $employee_id)
+    public static function record(int $company_id, int $employee_id): void
     {
-        $dotenv = Dotenv::createImmutable(__DIR__ . "/../../../../");
+        $dotenv = Dotenv::createImmutable(__DIR__ . "/../../../");
         $dotenv->load();
 
         //DBから当日の打刻履歴を取得
@@ -111,9 +108,6 @@ class StampUseCase
             3 => "戻ります。",
             4 => "終了します。"
         ];
-
-        $dotenv = Dotenv::createImmutable(__DIR__ . "/../../../../");
-        $dotenv->load();
 
         $token = $_ENV['SLACK_TOKEN'];
 
@@ -179,21 +173,6 @@ class StampUseCase
             "datetime" => $datetime,
         ];
         $json = json_encode($array);
-
-        // タイムゾーン設定
-        date_default_timezone_set("Asia/Tokyo");
-        // フォーマッタの作成
-        $dateFormat = "Y-m-d H:i:s";
-        $output = "[%datetime%] %channel% %level_name% %message%\n";
-        $formatter = new LineFormatter($output, $dateFormat);
-
-        // ハンドラの作成
-        $stream = new StreamHandler(__DIR__ . '/../../../logs/record.log', Level::Info); // ログレベルINFO以上のみ出力
-        $stream->setFormatter($formatter);
-
-        // ロガーオブジェクトの作成
-        $logger = new Logger('ATTENDANCE');
-        $logger->pushHandler($stream);
-        $logger->info($json); // 出力される
+        Log::logInfo($json, 'ATTENDANCE');
     }
 }

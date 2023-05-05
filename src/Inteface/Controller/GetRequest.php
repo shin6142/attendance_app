@@ -2,7 +2,7 @@
 
 namespace AttendanceApp\Src\Inteface\Controller;
 
-class Request
+class GetRequest
 {
 
     private readonly int $companyId;

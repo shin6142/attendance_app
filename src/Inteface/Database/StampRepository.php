@@ -13,7 +13,7 @@ use PDOException;
 class StampRepository implements StampGateway
 {
 
-    public function findByDate(int $companyId, int $employeeId, string $date): Stamps
+    public function findBy(int $companyId, int $employeeId, string $date): Stamps
     {
         $dotenv = Dotenv::createImmutable(__DIR__ . '/../../../');
         $dotenv->load();
@@ -50,5 +50,10 @@ class StampRepository implements StampGateway
         }
 
         return new Stamps($list);
+    }
+
+    public function add(int $companyId, int $employeeId, int $type, string $date, string $datetime): void
+    {
+        // TODO: Implement add() method.
     }
 }

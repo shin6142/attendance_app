@@ -24,7 +24,7 @@ class StampUseCase
      */
     public function getByDate(int $company_id, int $employee_id, string $base_date): DailyStampsDto
     {
-        $stamps = $this->StampRepository->findByDate($company_id, $employee_id, $base_date);
+        $stamps = $this->StampRepository->findBy($company_id, $employee_id, $base_date);
         $stampArray = $stamps->getStamps();
         $companyId = $stampArray[0]->getCompanyId();
         $employeeId = $stampArray[0]->getEmployeeId();

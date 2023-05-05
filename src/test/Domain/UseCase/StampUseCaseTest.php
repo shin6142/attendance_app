@@ -48,7 +48,7 @@ class StampUseCaseTest extends TestCase
         $stamps = new Stamps($stampArr);
 
         $this->gatewayMock->expects($this->once())
-            ->method('findByDate')
+            ->method('findBy')
             ->with(
                 $companyId,
                 $employeeId,

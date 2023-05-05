@@ -4,21 +4,18 @@ require_once __DIR__ . "/../../../../vendor/autoload.php";
 
 use AttendanceApp\Src\Domain\UseCase\StampUseCase;
 
-require_once(__DIR__ . "/../../v1/stamp/Main.php");
 
 $result['success'] = false;
 $result["error"] = '';
 try{
-    $company_id = $_REQUEST['company_id'];
-    $employee_id = $_REQUEST['employee_id'];
+    if (!isset($_POST['company_id'])) {
+        throw new Exception('不正な会社IDです');
+    }
+    if (!isset($_POST['employee_id'])) {
+        throw new Exception('不正な従業員IDです');
+    }
 
-    if(!isset($company_id)){
-        throw new InvalidArgumentException('会社IDを指定してください');
-    }
-    if(!isset($employee_id)){
-        throw new InvalidArgumentException('従業員IDを指定してください');
-    }
-    StampUseCase::record((int)$company_id, (int)$employee_id);
+    StampUseCase::record($_POST['company_id'], $_POST['employee_id']);
     $result['success'] = true;
     header("HTTP/1.1 200 OK");
 }catch (InvalidArgumentException $e){

@@ -4,24 +4,21 @@ require_once(__DIR__ . "/Main.php");
 
 $result['success'] = false;
 $result["error"] = '';
-try{
-    $company_id = $_REQUEST['company_id'];
-    $employee_id = $_REQUEST['employee_id'];
+try {
 
-    if(!isset($company_id)){
-        throw new Exception('会社IDを指定してください');
+    if (!isset($_POST['company_id'])) {
+        throw new Exception('不正な会社IDです');
     }
-    if(!isset($employee_id)){
-        throw new Exception('従業員IDを指定してください');
+    if (!isset($_POST['employee_id'])) {
+        throw new Exception('不正な従業員IDです');
     }
-    Main::record((int)$company_id, (int)$employee_id);
+    Main::record($_POST['company_id'], $_POST['employee_id']);
     $result['success'] = true;
     header("HTTP/1.1 200 OK");
-}catch(Exception $e){
+} catch (Exception $e) {
     header('HTTP/1.1 500 Internal Server Error');
     $result["error"] = $e->getMessage();
 }
 
-header('Content-Type: application/json');
 echo json_encode($result);
 exit;

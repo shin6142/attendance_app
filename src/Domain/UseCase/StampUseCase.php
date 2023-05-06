@@ -3,6 +3,7 @@
 namespace AttendanceApp\Src\Domain\UseCase;
 
 use AttendanceApp\Src\Domain\Service\DailyStampsService;
+use AttendanceApp\Src\Inteface\Api\SlackApi;
 use AttendanceApp\Src\Inteface\Database\StampRepository;
 use AttendanceApp\Src\Inteface\Gateway\StampGateway;
 use AttendanceApp\Src\Inteface\Logger\Log;
@@ -83,34 +84,8 @@ class StampUseCase
             4 => "終了します。"
         ];
 
-        $token = $_ENV['SLACK_TOKEN'];
-
-        //POSTデータ
-        $params = http_build_query(
-            [
-                'channel' => $_ENV['CHANNEL_TIMES_YAMAGA'],
-                'text' => $statusArr[$type]
-            ]
-        );
-
-        $headers = ["Authorization: Bearer $token"];
-
-        // SLACK POSTリクエスト送信
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, 'https://slack.com/api/chat.postMessage');
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_HEADER, true);
-        $response = curl_exec($curl);
-        $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
-        $header = substr($response, 0, $header_size);
-        $body = substr($response, $header_size);
-        $result = json_decode($body, true);
-        if (!$result["ok"]) {
-            throw new Exception('スラック投稿に失敗しました');
-        }
+        $slackApi = new SlackApi();
+        $slackApi->sendMessage($statusArr[$type]);
 
         $repository->add($company_id, $employee_id, $type, $date, $datetime);
 

@@ -3,29 +3,31 @@
 namespace AttendanceApp\Src\Inteface\Api;
 
 use AttendanceApp\Src\Inteface\Gateway\SlackAPIGateway;
-use Dotenv\Dotenv;
+use Exception;
 
 class SlackApi implements SlackAPIGateway
 {
 
     private string $token;
-    public function __constructor(){
-        $dotenv = Dotenv::createImmutable(__DIR__ . "/../../../");
-        $dotenv->load();
+    private string $channelId;
+
+    public function __construct()
+    {
         $this->token = $_ENV['SLACK_TOKEN'];
+        $this->channelId = $_ENV['CHANNEL_TIMES_YAMAGA'];
     }
 
     /**
-     * @param string $channelId
      * @param string $text
      * @return void
+     * @throws Exception
      */
-    public function sendMessage(string $channelId, string $text): void
+    public function sendMessage(string $text): void
     {
         //POSTデータ
         $params = http_build_query(
             [
-                'channel' => $channelId,
+                'channel' => $this->channelId,
                 'text' => $text
             ]
         );
@@ -40,7 +42,6 @@ class SlackApi implements SlackAPIGateway
         curl_setopt($curl, CURLOPT_HEADER, true);
         $response = curl_exec($curl);
         $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
-        $header = substr($response, 0, $header_size);
         $body = substr($response, $header_size);
         $result = json_decode($body, true);
         if (!$result["ok"]) {

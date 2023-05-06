@@ -56,4 +56,19 @@ class DailyStampsServiceTest extends TestCase
         //when
         $this->service->lastStatus($InvalidEmployeeId, $date, $stamps);
     }
+
+    public function test_lastStatus_打刻タイプが不正値()
+    {
+        //then
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('重複した打刻タイプの打刻情報が存在します');
+        //given
+        $stamp_1 = Stamp::create(1, 1, 1, '2023-04-01', '2023-04-01 10:00:00');
+        $stamp_2 = Stamp::create(1, 1, 1, '2023-04-01', '2023-04-01 12:00:00');
+        $stamps = new Stamps([$stamp_1, $stamp_2]);
+        $employeeId = 1;
+        $date = '2023-04-01';
+        //when
+        $this->service->lastStatus($employeeId, $date, $stamps);
+    }
 }

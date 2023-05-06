@@ -22,12 +22,19 @@ class DailyStampsService
 
     private function validate(int $employeeId, string $date, Stamps $stamps): void
     {
+        $type = 0;
         foreach ($stamps->getStamps() as $stamp) {
-            if($date != $stamp->getDate()){
+            if ($date != $stamp->getDate()) {
                 throw new InvalidArgumentException('日付と処理対象の打刻情報が一致しません');
             }
-            if($employeeId != $stamp->getEmployeeId()){
+            if ($employeeId != $stamp->getEmployeeId()) {
                 throw new InvalidArgumentException('従業員IDと処理対象の打刻情報が一致しません');
+            }
+
+            if ($type != $stamp->getType()) {
+                $type = $stamp->getType();
+            }else{
+                throw new InvalidArgumentException('重複した打刻タイプの打刻情報が存在します');
             }
         }
     }

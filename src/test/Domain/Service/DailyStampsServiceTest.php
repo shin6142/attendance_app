@@ -21,8 +21,9 @@ class DailyStampsServiceTest extends TestCase
         $stamp_1 = Stamp::create(1, 1, 1, '2023-04-01', '2023-04-01 10:00:00');
         $stamps = new Stamps([$stamp_1]);
         $employeeId = 1;
+        $date = '2023-04-01';
         //when
-        $actual = $this->service->lastStatus($employeeId, $stamps);
+        $actual = $this->service->lastStatus($employeeId, $date, $stamps);
         //then
         $expect = 1;
         $this->assertEquals($expect, $actual);
@@ -36,7 +37,8 @@ class DailyStampsServiceTest extends TestCase
         $stamp_1 = Stamp::create(1, 1, 1, '2023-04-01', '2023-04-01 10:00:00');
         $stamps = new Stamps([$stamp_1]);
         $InvalidEmployeeId = 2;
+        $date = '2023-04-01';
         //when
-        $actual = $this->service->lastStatus($InvalidEmployeeId, $stamps);
+        $this->service->lastStatus($InvalidEmployeeId, $date, $stamps);
     }
 }

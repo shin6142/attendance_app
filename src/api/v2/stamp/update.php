@@ -14,8 +14,9 @@ try{
     if (!isset($_POST['employee_id'])) {
         throw new Exception('不正な従業員IDです');
     }
-
-    StampUseCase::record($_POST['company_id'], $_POST['employee_id']);
+    $date = '2023-05-06';
+    $datetime = '2023-05-06 12:04:06';
+    StampUseCase::record($_POST['company_id'], $_POST['employee_id'], $date, $datetime);
     $result['success'] = true;
     header("HTTP/1.1 200 OK");
 }catch (InvalidArgumentException $e){

@@ -2,6 +2,8 @@
 
 namespace AttendanceApp\Src\Domain\UseCase;
 
+use AttendanceApp\Src\Domain\Service\DailyStampsService;
+use AttendanceApp\Src\Inteface\Database\StampRepository;
 use AttendanceApp\Src\Inteface\Gateway\StampGateway;
 use AttendanceApp\Src\Inteface\Logger\Log;
 use Dotenv\Dotenv;
@@ -64,42 +66,14 @@ class StampUseCase
     /**
      * @throws Exception
      */
-    public static function record(int $company_id, int $employee_id): void
+    public static function record(int $company_id, int $employee_id, string $date, string $datetime): void
     {
-        $dotenv = Dotenv::createImmutable(__DIR__ . "/../../../");
-        $dotenv->load();
+        $repository = new StampRepository();
+        $stamps = $repository->findBy($company_id, $employee_id, $date);
+        $service = new DailyStampsService();
+        $lastStatus = $service->lastStatus($employee_id, $date, $stamps);
 
-        //DBから当日の打刻履歴を取得
-        $dsn = 'mysql:dbname=' . $_ENV['MYSQL_DATABASE'] . ';host=mysql';
-        $user = $_ENV['MYSQL_USER'];
-        $password = $_ENV['MYSQL_PASSWORD'];
-        try {
-            $pdo = new PDO($dsn, $user, $password);
-        } catch (PDOException $e) {
-            throw new Exception($e->getMessage());
-        }
-        $base_date = date('Y-m-d');
-        $stmt = $pdo->prepare("SELECT * FROM attendance WHERE company_id = :company_id AND employee_id = :employee_id AND base_date = :base_date ORDER BY type");
-        $stmt->bindParam(':company_id', $company_id, PDO::PARAM_STR);
-        $stmt->bindParam(':employee_id', $employee_id, PDO::PARAM_STR);
-        $stmt->bindParam(':base_date', $base_date, PDO::PARAM_STR);
-        $res = $stmt->execute();
-        if (!$res) {
-            throw new Exception('当日の打刻情報の取得に失敗しました');
-        }
-
-        $last_record_type = 0;
-        $data = $stmt->fetchAll();
-        foreach ($data as $d) {
-            if ($last_record_type < $d["type"]) {
-                $last_record_type = $d["type"];
-            }
-        }
-
-        if ($last_record_type == 4) {
-            exit;
-        }
-        $type = $last_record_type + 1;
+        $type = $lastStatus + 1;
 
         $statusArr = [
             0 => "テスト打刻です",

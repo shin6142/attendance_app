@@ -69,4 +69,14 @@ class StampUseCaseTest extends TestCase
         $actual = $this->useCase->getByDate($companyId, $employeeId, $date);
         $this->assertEquals($expected, $actual);
     }
+
+    public function test_record()
+    {
+        //given
+        $companyId = 1;
+        $employeeId = 1;
+        //when
+        $this->useCase->record($companyId, $employeeId);
+        //then
+    }
 }

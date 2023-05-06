@@ -12,7 +12,7 @@
     },
     "autoload": {
         "psr-4": {
-            "AttendanceApp\\Src\\": "src/"
+            "AttendanceApp\\Src\\Context": "src/context"
         }
     }
 }

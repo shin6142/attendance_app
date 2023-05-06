@@ -2,8 +2,8 @@
 
 require_once __DIR__ . "/../../../../vendor/autoload.php";
 
-use AttendanceApp\Src\Infrastructure\Injector\Injector;
-use AttendanceApp\Src\Inteface\Controller\GetRequest;
+use AttendanceApp\Src\Context\stamp\Infrastructure\Injector\Injector;
+use AttendanceApp\Src\Context\stamp\Inteface\Controller\GetRequest;
 
 
 $result['success'] = false;

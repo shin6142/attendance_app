@@ -112,38 +112,13 @@ class StampUseCase
             throw new Exception('スラック投稿に失敗しました');
         }
 
-        // 打刻時間をDBに保存
-        $dsn = 'mysql:dbname=' . $_ENV['MYSQL_DATABASE'] . ';host=mysql';
-        $user = $_ENV['MYSQL_USER'];
-        $password = $_ENV['MYSQL_PASSWORD'];
-        try {
-            $pdo = new PDO($dsn, $user, $password);
-        } catch (PDOException $e) {
-            throw new Exception($e->getMessage());
-        }
-        date_default_timezone_set('Asia/Tokyo');
-        $base_date = date('Y-m-d');
-        $datetime = date('Y-m-d H:m:s');
-        $stmt = $pdo->prepare("INSERT INTO attendance (
-                employee_id, company_id, type, base_date, datetime
-            ) VALUES (
-                :employee_id, :company_id, :type, :base_date, :datetime
-            )");
-        $stmt->bindParam(':employee_id', $employee_id, PDO::PARAM_STR);
-        $stmt->bindParam(':company_id', $company_id, PDO::PARAM_STR);
-        $stmt->bindParam(':type', $type, PDO::PARAM_STR);
-        $stmt->bindParam(':base_date', $base_date, PDO::PARAM_STR);
-        $stmt->bindParam(':datetime', $datetime, PDO::PARAM_STR);
-        $res = $stmt->execute();
-        if (!$res) {
-            throw new Exception('打刻情報のDB登録に失敗しました');
-        }
+        $repository->add($company_id, $employee_id, $type, $date, $datetime);
 
         $array = [
             "employee_id" => $employee_id,
             "company_id" => $company_id,
             "type" => $type,
-            "base_date" => $base_date,
+            "base_date" => $date,
             "datetime" => $datetime,
         ];
         $json = json_encode($array);

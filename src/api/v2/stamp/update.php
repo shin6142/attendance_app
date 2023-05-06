@@ -2,31 +2,33 @@
 
 require_once __DIR__ . "/../../../../vendor/autoload.php";
 
-use AttendanceApp\Src\Domain\UseCase\StampUseCase;
 use AttendanceApp\Src\Infrastructure\Injector\Injector;
 use AttendanceApp\Src\Inteface\Controller\PostRequest;
 
 
 $result['success'] = false;
 $result["error"] = '';
-try{
+try {
     if (!isset($_POST['company_id'])) {
-        throw new Exception('不正な会社IDです');
+        throw new Exception('会社IDを指定してください');
     }
     if (!isset($_POST['employee_id'])) {
-        throw new Exception('不正な従業員IDです');
+        throw new Exception('従業員IDを指定してください');
     }
-    $date = '2023-05-06';
-    $datetime = '2023-05-06 12:04:06';
     $controller = Injector::getStampController();
-    $request = new PostRequest();
+    $request = new PostRequest(
+        $_POST['company_id'],
+        $_POST['employee_id'],
+        date("Y-m-d"),
+        date("Y-m-d H:i:s")
+    );
     $controller->record($request);
     $result['success'] = true;
     header("HTTP/1.1 200 OK");
-}catch (InvalidArgumentException $e){
+} catch (InvalidArgumentException $e) {
     $result['error']['exception'] = $e->getMessage();
     header('HTTP', true, 400);
-}catch(Exception $e){
+} catch (Exception $e) {
     header('HTTP/1.1 500 Internal Server Error');
     $result["error"] = $e->getMessage();
 }

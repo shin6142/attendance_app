@@ -9,7 +9,7 @@ use Monolog\Logger;
 
 class Log
 {
-    const LOG_FILE_PATH = __DIR__ . '/../../../logs/record.log';
+    const LOG_FILE_PATH = __DIR__ . '/../../../../../logs/record.log';
     public static function logInfo(string $json, string $channelName): void
     {
         // タイムゾーン設定

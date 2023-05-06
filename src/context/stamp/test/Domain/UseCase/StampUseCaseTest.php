@@ -6,6 +6,7 @@ require_once(__DIR__ . "/../../../../../../vendor/autoload.php");
 
 use AttendanceApp\Src\Context\stamp\Domain\Model\Stamp;
 use AttendanceApp\Src\Context\stamp\Domain\Model\Stamps;
+use AttendanceApp\Src\Context\stamp\Domain\Service\DailyStampsService;
 use AttendanceApp\Src\Context\stamp\Domain\UseCase\DailyStampsDto;
 use AttendanceApp\Src\Context\stamp\Domain\UseCase\StampUseCase;
 use AttendanceApp\Src\Context\stamp\Inteface\Gateway\StampGateway;
@@ -24,7 +25,8 @@ class StampUseCaseTest extends TestCase
     public function setUp(): void
     {
         $this->gatewayMock = $this->createMock(StampGateway::class);
-        $this->useCase = new StampUseCase($this->gatewayMock);
+        $this->service = new DailyStampsService();
+        $this->useCase = new StampUseCase($this->gatewayMock, $this->service);
     }
 
     public function test_getByDate()
@@ -36,14 +38,12 @@ class StampUseCaseTest extends TestCase
         $startDateTime = "2023-04-29 8:04:20";
         $leaveDateTime = "2023-04-29 12:04:20";
         $backDateTime = "2023-04-29 13:04:20";
-        $endDateTime = "2023-04-29 18:04:20";
 
         //then
         $stampArr = [
-            Stamp::create($companyId,$employeeId,1, $date, $startDateTime),
-            Stamp::create($companyId,$employeeId,2, $date, $leaveDateTime),
-            Stamp::create($companyId,$employeeId,3, $date, $backDateTime),
-            Stamp::create($companyId,$employeeId,4, $date, $endDateTime)
+            Stamp::create($companyId, $employeeId, 1, $date, $startDateTime),
+            Stamp::create($companyId, $employeeId, 2, $date, $leaveDateTime),
+            Stamp::create($companyId, $employeeId, 3, $date, $backDateTime),
         ];
         $stamps = new Stamps($stampArr);
 
@@ -64,7 +64,7 @@ class StampUseCaseTest extends TestCase
             $startDateTime,
             $leaveDateTime,
             $backDateTime,
-            $endDateTime,
+            null
         );
         $actual = $this->useCase->getByDate($companyId, $employeeId, $date);
         $this->assertEquals($expected, $actual);
@@ -78,7 +78,7 @@ class StampUseCaseTest extends TestCase
         $date = '2023-04-01';
         $datetime = '2023-04-01 12:00:00';
 
-        $stamp1 = Stamp::create($companyId,$employeeId,1, '2023-04-01', '2023-04-01 8:00:00');
+        $stamp1 = Stamp::create($companyId, $employeeId, 1, '2023-04-01', '2023-04-01 8:00:00');
         $stamps = new Stamps([$stamp1]);
         //then
         $this->gatewayMock->expects($this->once())
@@ -87,7 +87,7 @@ class StampUseCaseTest extends TestCase
             ->willReturn($stamps);
 
         $this->gatewayMock->expects($this->once())
-            ->method('add')
+            ->method('save')
             ->with($companyId, $employeeId, 2, $date, $datetime);
 
         //when

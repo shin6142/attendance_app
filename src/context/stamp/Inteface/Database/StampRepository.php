@@ -13,6 +13,7 @@ use PDOException;
 class StampRepository implements StampGateway
 {
     private PDO $pdo;
+
     public function __construct()
     {
         $dotenv = Dotenv::createImmutable(__DIR__ . '/../../../../../');
@@ -37,11 +38,11 @@ class StampRepository implements StampGateway
 
         $res = $stmt->execute();
         $data = [];
-        if( $res ) {
+        if ($res) {
             $data = $stmt->fetchAll();
         }
         $list = [];
-        foreach ($data as $d){
+        foreach ($data as $d) {
             $stamp = Stamp::create(
                 $d['company_id'],
                 $d['employee_id'],
@@ -55,13 +56,18 @@ class StampRepository implements StampGateway
         return new Stamps($list);
     }
 
-    public function add(int $companyId, int $employeeId, int $type, string $date, string $datetime): void
+    public function save(Stamp $stamp): void
     {
         $stmt = $this->pdo->prepare("INSERT INTO attendance (
                 employee_id, company_id, type, base_date, datetime
             ) VALUES (
                 :employee_id, :company_id, :type, :base_date, :datetime
             )");
+        $employeeId = $stamp->getEmployeeId();
+        $companyId = $stamp->getCompanyId();
+        $type = $stamp->getType();
+        $date = $stamp->getDate();
+        $datetime = $stamp->getDateTime();
         $stmt->bindParam(':employee_id', $employeeId, PDO::PARAM_STR);
         $stmt->bindParam(':company_id', $companyId, PDO::PARAM_STR);
         $stmt->bindParam(':type', $type, PDO::PARAM_STR);

@@ -2,6 +2,7 @@
 
 namespace AttendanceApp\Src\Context\stamp\Inteface\Gateway;
 
+use AttendanceApp\Src\Context\stamp\Domain\Model\Stamp;
 use AttendanceApp\Src\Context\stamp\Domain\Model\Stamps;
 
 interface StampGateway
@@ -15,12 +16,8 @@ interface StampGateway
     public function findBy(int $companyId, int $employeeId, string $date): Stamps;
 
     /**
-     * @param int $companyId
-     * @param int $employeeId
-     * @param int $type
-     * @param string $date
-     * @param string $datetime
+     * @param Stamp $stamp
      * @return void
      */
-    public function add(int $companyId, int $employeeId, int $type, string $date, string $datetime): void;
+    public function save(Stamp $stamp): void;
 }

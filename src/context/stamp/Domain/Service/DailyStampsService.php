@@ -2,24 +2,22 @@
 
 namespace AttendanceApp\Src\Context\stamp\Domain\Service;
 
+use AttendanceApp\Src\Context\stamp\Domain\Model\Stamp;
 use AttendanceApp\Src\Context\stamp\Domain\Model\Stamps;
 use InvalidArgumentException;
 
 class DailyStampsService
 {
 
-    public function getTimeByType(int $employeeId, string $date, Stamps $stamps, int $type)
+    public function getByType(int $employeeId, string $date, Stamps $stamps, int $type): null|Stamp
     {
-        if (count($stamps->getStamps()) == 0) {
-            return false;
-        }
         $this->validate($employeeId, $date, $stamps);
-        $stamp = null;
         foreach ($stamps->getStamps() as $stamp) {
             if ($type == $stamp->getType()) {
-                return $stamp->getDateTime();
+                return $stamp;
             }
         }
+        return null;
     }
 
     public function lastStatus(int $employeeId, string $date, Stamps $stamps): int

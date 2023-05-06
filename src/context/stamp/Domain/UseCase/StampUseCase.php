@@ -2,6 +2,8 @@
 
 namespace AttendanceApp\Src\Context\stamp\Domain\UseCase;
 
+use AttendanceApp\Src\Context\stamp\Domain\Model\Stamp;
+use AttendanceApp\Src\Context\stamp\Domain\Model\Stamps;
 use AttendanceApp\Src\Context\stamp\Domain\Service\DailyStampsService;
 use AttendanceApp\Src\Context\stamp\Inteface\Api\SlackApi;
 use AttendanceApp\Src\Context\stamp\Inteface\Gateway\StampGateway;
@@ -11,7 +13,10 @@ use Exception;
 class StampUseCase
 {
 
-    public function __construct(private readonly StampGateway $stampRepository)
+    public function __construct(
+        private readonly StampGateway       $stampRepository,
+        private readonly DailyStampsService $dailyStampsService
+    )
     {
     }
 
@@ -28,48 +33,32 @@ class StampUseCase
         $companyId = $stampArray[0]->getCompanyId();
         $employeeId = $stampArray[0]->getEmployeeId();
         $date = $stampArray[0]->getDate();
-        $startDateTime = null;
-        $leaveDateTime = null;
-        $backDateTime = null;
-        $endDateTime = null;
 
-        foreach($stampArray as $s){
-            $type = $s->getType();
-            switch ($type){
-                case 1:
-                    $startDateTime = $s->getDateTime();
-                    break;
-                case 2:
-                    $leaveDateTime = $s->getDateTime();
-                    break;
-                case 3:
-                    $backDateTime = $s->getDateTime();
-                    break;
-                case 4:
-                    $endDateTime = $s->getDateTime();
-            }
-        }
         return new DailyStampsDto(
             $employeeId,
             $companyId,
             $date,
-            $startDateTime,
-            $leaveDateTime,
-            $backDateTime,
-            $endDateTime,
+            $this->dailyStampsService->getByType($employee_id, $base_date, $stamps, 1)?->getDateTime(),
+            $this->dailyStampsService->getByType($employee_id, $base_date, $stamps, 2)?->getDateTime(),
+            $this->dailyStampsService->getByType($employee_id, $base_date, $stamps, 3)?->getDateTime(),
+            $this->dailyStampsService->getByType($employee_id, $base_date, $stamps, 4)?->getDateTime(),
         );
     }
 
     /**
+     * @param int $company_id
+     * @param int $employee_id
+     * @param string $date
+     * @param string $datetime
+     * @return void
      * @throws Exception
      */
     public function record(int $company_id, int $employee_id, string $date, string $datetime): void
     {
         $stamps = $this->stampRepository->findBy($company_id, $employee_id, $date);
-        $service = new DailyStampsService();
-        $lastStatus = $service->lastStatus($employee_id, $date, $stamps);
-
+        $lastStatus = $this->dailyStampsService->lastStatus($employee_id, $date, $stamps);
         $type = $lastStatus + 1;
+        $stamp = Stamp::create($company_id, $employee_id, $type, $date, $datetime);
 
         $statusArr = [
             0 => "テスト打刻です",
@@ -82,7 +71,7 @@ class StampUseCase
         $slackApi = new SlackApi();
         $slackApi->sendMessage($statusArr[$type]);
 
-        $this->stampRepository->add($company_id, $employee_id, $type, $date, $datetime);
+        $this->stampRepository->save($stamp);
 
         $array = [
             "employee_id" => $employee_id,

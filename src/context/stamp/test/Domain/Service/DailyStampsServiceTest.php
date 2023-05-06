@@ -15,7 +15,7 @@ class DailyStampsServiceTest extends TestCase
         $this->service = new DailyStampsService();
     }
 
-    public function test_getTimeByType()
+    public function test_getByType()
     {
         //given
         $stamp_1 = Stamp::create(1, 1, 1, '2023-04-01', '2023-04-01 10:00:00');
@@ -23,23 +23,22 @@ class DailyStampsServiceTest extends TestCase
         $employeeId = 1;
         $date = '2023-04-01';
         //when
-        $actual = $this->service->getTimeByType($employeeId, $date, $stamps, 1);
+        $actual = $this->service->getByType($employeeId, $date, $stamps, 1);
         //then
-        $this->assertEquals('2023-04-01 10:00:00', $actual);
+        $this->assertEquals($stamp_1, $actual);
     }
 
-    public function test_getTimeByType_打刻履歴が存在しない場合()
+    public function test_getByType_打刻履歴が存在しない場合()
     {
         //given
         $stamps = new Stamps([]);
         $employeeId = 1;
         $date = '2023-04-01';
         //when
-        $actual = $this->service->getTimeByType($employeeId, $date, $stamps, 1);
+        $actual = $this->service->getByType($employeeId, $date, $stamps, 1);
         //then
         $this->assertEquals(false, $actual);
     }
-
 
 
     public function test_lastStatus()

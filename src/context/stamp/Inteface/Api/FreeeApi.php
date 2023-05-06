@@ -2,6 +2,7 @@
 
 namespace AttendanceApp\Src\Context\stamp\Inteface\Api;
 
+use AttendanceApp\Src\Context\stamp\Domain\Model\Stamps;
 use AttendanceApp\Src\Context\stamp\Inteface\Gateway\FreeeApiGateway;
 use Dotenv\Dotenv;
 use PDO;
@@ -27,7 +28,7 @@ class FreeeApi implements FreeeApiGateway
 
     private function refreshToken(): void
     {
-        $dotenv = Dotenv::createImmutable(__DIR__ . "/../../../");
+        $dotenv = Dotenv::createImmutable(__DIR__ . "/../../../../../");
         $dotenv->load();
 
         $dsn = 'mysql:dbname=' . $_ENV['MYSQL_DATABASE'] . ';host=mysql';
@@ -42,10 +43,10 @@ class FreeeApi implements FreeeApiGateway
         $stmt = $pdo->prepare("SELECT * FROM token ORDER BY issued_unix_datetime DESC LIMIT 1");
         $res = $stmt->execute();
         $data = false;
-        if($res){
+        if ($res) {
             echo "DB取得に成功しました\n";
             $data = $stmt->fetchAll();
-        }else{
+        } else {
             echo "DB取得に失敗しました\n";
         }
 
@@ -53,12 +54,12 @@ class FreeeApi implements FreeeApiGateway
         $params = http_build_query(
             array(
                 'grant_type' => 'refresh_token',
-                'client_id' =>  $_ENV['FREEE_CLIENT_ID'],
-                'client_secret' =>  $_ENV['FREEE_CLIENT_SECRET'],
+                'client_id' => $_ENV['FREEE_CLIENT_ID'],
+                'client_secret' => $_ENV['FREEE_CLIENT_SECRET'],
                 'refresh_token' => $data[0]["refresh_token"], //認証用URLで取得したコード
                 'redirect_uri' => 'urn:ietf:wg:oauth:2.0:oob')
         );
-        $headers = array( "Content-Type:application/x-www-form-urlencoded" );
+        $headers = array("Content-Type:application/x-www-form-urlencoded");
 
         // POSTリクエスト送信
         $curl = curl_init();
@@ -100,9 +101,9 @@ class FreeeApi implements FreeeApiGateway
         $stmt->bindParam(':scope', $result["scope"], PDO::PARAM_STR);
         $stmt->bindParam(':issued_unix_datetime', $result["created_at"], PDO::PARAM_STR);
         $res = $stmt->execute();
-        if($res){
+        if ($res) {
             echo "DB登録成功しました\n";
-        }else{
+        } else {
             echo "DB登録に失敗しました\n";
         }
     }

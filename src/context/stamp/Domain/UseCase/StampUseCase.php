@@ -59,19 +59,10 @@ class StampUseCase
         $lastStatus = $this->dailyStampsService->lastStatus($employee_id, $date, $stamps);
         $type = $lastStatus + 1;
         $stamp = Stamp::create($company_id, $employee_id, $type, $date, $datetime);
-
-        $statusArr = [
-            0 => "テスト打刻です",
-            1 => "開始します。",
-            2 => "離席します。",
-            3 => "戻ります。",
-            4 => "終了します。"
-        ];
+        $this->stampRepository->save($stamp);
 
         $slackApi = new SlackApi();
-        $slackApi->sendMessage($statusArr[$type]);
-
-        $this->stampRepository->save($stamp);
+        $slackApi->sendMessage($type);
 
         $array = [
             "employee_id" => $employee_id,

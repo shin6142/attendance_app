@@ -5,8 +5,8 @@ namespace AttendanceApp\Src\Context\stamp\Inteface\Gateway;
 Interface SlackAPIGateway
 {
     /**
-     * @param string $text
+     * @param int $status
      * @return void
      */
-    public function sendMessage(string $text): void;
+    public function sendMessage(int $status): void;
 }

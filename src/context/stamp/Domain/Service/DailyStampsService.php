@@ -7,6 +7,21 @@ use InvalidArgumentException;
 
 class DailyStampsService
 {
+
+    public function getTimeByType(int $employeeId, string $date, Stamps $stamps, int $type)
+    {
+        if (count($stamps->getStamps()) == 0) {
+            return false;
+        }
+        $this->validate($employeeId, $date, $stamps);
+        $stamp = null;
+        foreach ($stamps->getStamps() as $stamp) {
+            if ($type == $stamp->getType()) {
+                return $stamp->getDateTime();
+            }
+        }
+    }
+
     public function lastStatus(int $employeeId, string $date, Stamps $stamps): int
     {
         $this->validate($employeeId, $date, $stamps);
@@ -33,7 +48,7 @@ class DailyStampsService
 
             if ($type != $stamp->getType()) {
                 $type = $stamp->getType();
-            }else{
+            } else {
                 throw new InvalidArgumentException('重複した打刻タイプの打刻情報が存在します');
             }
         }

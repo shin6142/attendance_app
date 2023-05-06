@@ -3,6 +3,8 @@
 require_once __DIR__ . "/../../../../vendor/autoload.php";
 
 use AttendanceApp\Src\Domain\UseCase\StampUseCase;
+use AttendanceApp\Src\Infrastructure\Injector\Injector;
+use AttendanceApp\Src\Inteface\Controller\PostRequest;
 
 
 $result['success'] = false;
@@ -16,7 +18,9 @@ try{
     }
     $date = '2023-05-06';
     $datetime = '2023-05-06 12:04:06';
-    StampUseCase::record($_POST['company_id'], $_POST['employee_id'], $date, $datetime);
+    $controller = Injector::getStampController();
+    $request = new PostRequest();
+    $controller->record($request);
     $result['success'] = true;
     header("HTTP/1.1 200 OK");
 }catch (InvalidArgumentException $e){

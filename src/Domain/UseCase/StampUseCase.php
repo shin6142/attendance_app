@@ -15,7 +15,7 @@ use PDOException;
 class StampUseCase
 {
 
-    public function __construct(private readonly StampGateway $StampRepository)
+    public function __construct(private readonly StampGateway $stampRepository)
     {
     }
 
@@ -27,7 +27,7 @@ class StampUseCase
      */
     public function getByDate(int $company_id, int $employee_id, string $base_date): DailyStampsDto
     {
-        $stamps = $this->StampRepository->findBy($company_id, $employee_id, $base_date);
+        $stamps = $this->stampRepository->findBy($company_id, $employee_id, $base_date);
         $stampArray = $stamps->getStamps();
         $companyId = $stampArray[0]->getCompanyId();
         $employeeId = $stampArray[0]->getEmployeeId();
@@ -67,10 +67,9 @@ class StampUseCase
     /**
      * @throws Exception
      */
-    public static function record(int $company_id, int $employee_id, string $date, string $datetime): void
+    public function record(int $company_id, int $employee_id, string $date, string $datetime): void
     {
-        $repository = new StampRepository();
-        $stamps = $repository->findBy($company_id, $employee_id, $date);
+        $stamps = $this->stampRepository->findBy($company_id, $employee_id, $date);
         $service = new DailyStampsService();
         $lastStatus = $service->lastStatus($employee_id, $date, $stamps);
 
@@ -87,7 +86,7 @@ class StampUseCase
         $slackApi = new SlackApi();
         $slackApi->sendMessage($statusArr[$type]);
 
-        $repository->add($company_id, $employee_id, $type, $date, $datetime);
+        $this->stampRepository->add($company_id, $employee_id, $type, $date, $datetime);
 
         $array = [
             "employee_id" => $employee_id,

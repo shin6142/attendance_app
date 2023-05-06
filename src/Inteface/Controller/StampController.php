@@ -26,5 +26,11 @@ class StampController
         return $result;
     }
 
-    public function record(ClockInRequest $request): void{}
+    public function record(PostRequest $request): void{
+        $companyId = 1;
+        $employeeId = 1;
+        $date = '2023-06-01';
+        $datetime = '2023-06-01 12:00:00';
+        $this->useCase->record($companyId, $employeeId, $date, $datetime);
+    }
 }

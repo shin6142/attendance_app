@@ -3,6 +3,7 @@
 namespace AttendanceApp\Src\Inteface\Api;
 
 use AttendanceApp\Src\Inteface\Gateway\SlackAPIGateway;
+use Dotenv\Dotenv;
 use Exception;
 
 class SlackApi implements SlackAPIGateway
@@ -13,6 +14,8 @@ class SlackApi implements SlackAPIGateway
 
     public function __construct()
     {
+        $dotenv = Dotenv::createImmutable(__DIR__ . '/../../../');
+        $dotenv->load();
         $this->token = $_ENV['SLACK_TOKEN'];
         $this->channelId = $_ENV['CHANNEL_TIMES_YAMAGA'];
     }

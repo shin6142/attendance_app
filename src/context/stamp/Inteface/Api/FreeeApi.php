@@ -2,9 +2,10 @@
 
 namespace AttendanceApp\Src\Context\stamp\Inteface\Api;
 
-use AttendanceApp\Src\Context\stamp\Domain\Model\Stamps;
+use AttendanceApp\Src\Context\stamp\Domain\UseCase\DailyStampsDto;
 use AttendanceApp\Src\Context\stamp\Inteface\Gateway\FreeeApiGateway;
 use Dotenv\Dotenv;
+use Exception;
 use PDO;
 use PDOException;
 
@@ -21,12 +22,59 @@ class FreeeApi implements FreeeApiGateway
         // TODO: Implement getEmployeeInfo() method.
     }
 
-    public function registerAttendance(): void
+    public function registerAttendance(DailyStampsDto $dto): void
     {
-        // TODO: Implement registerAttendance() method.
+        $this->refreshToken();
+        $token = $this->findLatestToken();
+        $access_token = $token['access_token'];
+
+        $dto->getStamps()[0]->getCompanyId();
+        $curl = curl_init();
+
+        $companyId = $dto->getCompanyId();
+        $employeeId = $dto->getEmployeeId();
+        $date = $dto->getDate();
+
+        $leaveDateTime = $dto->getLeaveDatetime();
+        $backDateTime = $dto->getBackDatetime();
+        $startDatetime = $dto->getStartDatetime();
+        $endDateTime = $dto->getEndDatetime();
+
+        $url = "https://api.freee.co.jp/hr/api/v1/employees/$employeeId/work_records/$date";
+        $headers = array(
+            "Accept: application/json",
+            "Authorization: Bearer " . $access_token,
+            "Content-Type: application/json",
+            "FREEE-VERSION: 2022-02-01"
+        );
+
+        $data = array(
+            "company_id" => $companyId,
+            "break_records" => array(
+                array(
+                    "clock_in_at" => $leaveDateTime,
+                    "clock_out_at" => $backDateTime
+                )
+            ),
+            "clock_in_at" => $startDatetime,
+            "clock_out_at" => $endDateTime
+        );
+
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
+
+        $result = curl_exec($curl);
+
+        if ($result === false) {
+            throw new Exception(curl_error($curl));
+        }
+
+        curl_close($curl);
     }
 
-    private function refreshToken(): void
+    private function findLatestToken(): array
     {
         $dotenv = Dotenv::createImmutable(__DIR__ . "/../../../../../");
         $dotenv->load();
@@ -50,16 +98,23 @@ class FreeeApi implements FreeeApiGateway
             echo "DB取得に失敗しました\n";
         }
 
+        return $data[0];
+    }
+
+    private function refreshToken(): void
+    {
+        $token = $this->findLatestToken();
         //POSTデータ
         $params = http_build_query(
-            array(
+            [
                 'grant_type' => 'refresh_token',
                 'client_id' => $_ENV['FREEE_CLIENT_ID'],
                 'client_secret' => $_ENV['FREEE_CLIENT_SECRET'],
-                'refresh_token' => $data[0]["refresh_token"], //認証用URLで取得したコード
-                'redirect_uri' => 'urn:ietf:wg:oauth:2.0:oob')
+                'refresh_token' => $token['refresh_token'], //認証用URLで取得したコード
+                'redirect_uri' => 'urn:ietf:wg:oauth:2.0:oob'
+            ]
         );
-        $headers = array("Content-Type:application/x-www-form-urlencoded");
+        $headers = ["Content-Type:application/x-www-form-urlencoded"];
 
         // POSTリクエスト送信
         $curl = curl_init();

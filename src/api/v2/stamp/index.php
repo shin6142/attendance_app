@@ -30,7 +30,7 @@ try {
 } catch (InvalidArgumentException $e){
     $result['error']['exception'] = $e->getMessage();
     header('HTTP', true, 400);
-}catch (Throwable $e) {
+}catch (Exception $e) {
     header('HTTP/1.1 500 Internal Server Error');
     $result['error']['exception'] = $e->getMessage();
 }

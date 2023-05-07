@@ -86,9 +86,10 @@ class StampUseCaseTest extends TestCase
             ->with($companyId, $employeeId, $date)
             ->willReturn($stamps);
 
+        $stamp2 = Stamp::create($companyId, $employeeId, 2, '2023-04-01', '2023-04-01 12:00:00');
         $this->gatewayMock->expects($this->once())
             ->method('save')
-            ->with($companyId, $employeeId, 2, $date, $datetime);
+            ->with($stamp2);
 
         //when
         $this->useCase->record($companyId, $employeeId, $date, $datetime);

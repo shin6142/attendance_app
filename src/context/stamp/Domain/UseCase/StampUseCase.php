@@ -3,8 +3,8 @@
 namespace AttendanceApp\Src\Context\stamp\Domain\UseCase;
 
 use AttendanceApp\Src\Context\stamp\Domain\Model\Stamp;
-use AttendanceApp\Src\Context\stamp\Domain\Model\Stamps;
 use AttendanceApp\Src\Context\stamp\Domain\Service\DailyStampsService;
+use AttendanceApp\Src\Context\stamp\Inteface\Api\FreeeApi;
 use AttendanceApp\Src\Context\stamp\Inteface\Api\SlackApi;
 use AttendanceApp\Src\Context\stamp\Inteface\Gateway\StampGateway;
 use AttendanceApp\Src\Context\stamp\Inteface\Logger\Log;
@@ -29,15 +29,11 @@ class StampUseCase
     public function getByDate(int $company_id, int $employee_id, string $base_date): DailyStampsDto
     {
         $stamps = $this->stampRepository->findBy($company_id, $employee_id, $base_date);
-        $stampArray = $stamps->getStamps();
-        $companyId = $stampArray[0]->getCompanyId();
-        $employeeId = $stampArray[0]->getEmployeeId();
-        $date = $stampArray[0]->getDate();
 
         return new DailyStampsDto(
-            $employeeId,
-            $companyId,
-            $date,
+            $company_id,
+            $employee_id,
+            $base_date,
             $this->dailyStampsService->getByType($employee_id, $base_date, $stamps, 1)?->getDateTime(),
             $this->dailyStampsService->getByType($employee_id, $base_date, $stamps, 2)?->getDateTime(),
             $this->dailyStampsService->getByType($employee_id, $base_date, $stamps, 3)?->getDateTime(),
@@ -73,5 +69,16 @@ class StampUseCase
         ];
         $json = json_encode($array);
         Log::logInfo($json, 'ATTENDANCE');
+
+        if($type === 4){
+            $this->recordAttendanceOnFreee($company_id, $employee_id, $date);
+        }
+    }
+
+    private function recordAttendanceOnFreee(int $company_id, int $employee_id, string $base_date): void
+    {
+        $stamps = $this->stampRepository->findBy($company_id, $employee_id, $base_date);
+        $freeeApi = new FreeeApi();
+        $freeeApi->registerAttendance($stamps);
     }
 }

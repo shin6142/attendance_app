@@ -28,7 +28,6 @@ class FreeeApi implements FreeeApiGateway
         $token = $this->findLatestToken();
         $access_token = $token['access_token'];
 
-        $dto->getStamps()[0]->getCompanyId();
         $curl = curl_init();
 
         $companyId = $dto->getCompanyId();

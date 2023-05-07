@@ -31,8 +31,8 @@ class StampUseCase
         $stamps = $this->stampRepository->findBy($company_id, $employee_id, $base_date);
 
         return new DailyStampsDto(
-            $company_id,
             $employee_id,
+            $company_id,
             $base_date,
             $this->dailyStampsService->getByType($employee_id, $base_date, $stamps, 1)?->getDateTime(),
             $this->dailyStampsService->getByType($employee_id, $base_date, $stamps, 2)?->getDateTime(),
@@ -75,10 +75,13 @@ class StampUseCase
         }
     }
 
+    /**
+     * @throws Exception
+     */
     private function recordAttendanceOnFreee(int $company_id, int $employee_id, string $base_date): void
     {
-        $stamps = $this->stampRepository->findBy($company_id, $employee_id, $base_date);
+        $dto = $this->getByDate($company_id, $employee_id, $base_date);
         $freeeApi = new FreeeApi();
-        $freeeApi->registerAttendance($stamps);
+        $freeeApi->registerAttendance($dto);
     }
 }

@@ -17,7 +17,7 @@ class SlackApi implements SlackAPIGateway
         $dotenv = Dotenv::createImmutable(__DIR__ . '/../../../../../');
         $dotenv->load();
         $this->token = $_ENV['SLACK_TOKEN'];
-        $this->channelId = $_ENV['CHANNEL_TIMES_YAMAGA'];
+        $this->channelId = $_ENV['CHANNEL_DEV_ATTENDANCE'];
     }
 
     /**

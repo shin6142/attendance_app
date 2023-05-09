@@ -54,6 +54,9 @@ class StampUseCase
         $stamps = $this->stampRepository->findBy($company_id, $employee_id, $date);
         $lastStatus = $this->dailyStampsService->lastStatus($employee_id, $date, $stamps);
         $type = $lastStatus + 1;
+        if($type >= 4){
+            return;
+        }
         $stamp = Stamp::create($company_id, $employee_id, $type, $date, $datetime);
         $this->stampRepository->save($stamp);
 

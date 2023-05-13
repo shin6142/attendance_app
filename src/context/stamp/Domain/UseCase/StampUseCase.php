@@ -4,8 +4,8 @@ namespace AttendanceApp\Src\Context\stamp\Domain\UseCase;
 
 use AttendanceApp\Src\Context\stamp\Domain\Model\Stamp;
 use AttendanceApp\Src\Context\stamp\Domain\Service\DailyStampsService;
-use AttendanceApp\Src\Context\stamp\Inteface\Api\FreeeApi;
-use AttendanceApp\Src\Context\stamp\Inteface\Api\SlackApi;
+use AttendanceApp\Src\Context\stamp\Infrastructure\Api\FreeeApi;
+use AttendanceApp\Src\Context\stamp\Infrastructure\Api\SlackApi;
 use AttendanceApp\Src\Context\stamp\Inteface\Gateway\StampGateway;
 use AttendanceApp\Src\Context\stamp\Inteface\Logger\Log;
 use Exception;

@@ -7,8 +7,8 @@ require_once __DIR__ . "/../../../../../vendor/autoload.php";
 
 use AttendanceApp\Src\Context\stamp\Domain\Service\DailyStampsService;
 use AttendanceApp\Src\Context\stamp\Domain\UseCase\StampUseCase;
+use AttendanceApp\Src\Context\stamp\Infrastructure\Database\StampRepository;
 use AttendanceApp\Src\Context\stamp\Inteface\Controller\StampController;
-use AttendanceApp\Src\Context\stamp\Inteface\Database\StampRepository;
 
 class Injector
 {

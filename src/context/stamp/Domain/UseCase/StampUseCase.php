@@ -4,7 +4,6 @@ namespace AttendanceApp\Src\Context\stamp\Domain\UseCase;
 
 use AttendanceApp\Src\Context\stamp\Domain\Model\Stamp;
 use AttendanceApp\Src\Context\stamp\Domain\Service\DailyStampsService;
-use AttendanceApp\Src\Context\stamp\Infrastructure\Api\FreeeApi;
 use AttendanceApp\Src\Context\stamp\Infrastructure\Api\SlackApi;
 use AttendanceApp\Src\Context\stamp\Inteface\Gateway\FreeeApiGateway;
 use AttendanceApp\Src\Context\stamp\Inteface\Gateway\SlackAPIGateway;
@@ -18,7 +17,8 @@ class StampUseCase
     public function __construct(
         private readonly StampGateway       $stampRepository,
         private readonly DailyStampsService $dailyStampsService,
-        private readonly slackApiGateway $slackAPIGateway
+        private readonly SlackAPIGateway    $slackAPIGateway,
+        private readonly FreeeApiGateway    $freeeApiGateway
     )
     {
     }
@@ -57,14 +57,11 @@ class StampUseCase
         $stamps = $this->stampRepository->findBy($company_id, $employee_id, $date);
         $lastStatus = $this->dailyStampsService->lastStatus($employee_id, $date, $stamps);
         $type = $lastStatus + 1;
-        if($type > 4){
+        if ($type > 4) {
             return;
         }
         $stamp = Stamp::create($company_id, $employee_id, $type, $date, $datetime);
         $this->stampRepository->save($stamp);
-
-        $slackApi = new SlackApi();
-        $slackApi->send($type);
 
         $this->slackAPIGateway->send($type);
 
@@ -78,7 +75,7 @@ class StampUseCase
         $json = json_encode($array);
         Log::logInfo($json, 'ATTENDANCE');
 
-        if($type === 4){
+        if ($type === 4) {
             $this->recordAttendanceOnFreee($company_id, $employee_id, $date);
         }
     }
@@ -86,11 +83,18 @@ class StampUseCase
     /**
      * @throws Exception
      */
-    private function recordAttendanceOnFreee(int $company_id, int $employee_id, string $base_date): void
+    private function recordAttendanceOnFreee(int $company_id, int $employee_id, string $date): void
     {
-        $dto = $this->getByDate($company_id, $employee_id, $base_date);
-        $freeeApi = new freeeApi();
-        $freeeApi->registerAttendance($dto);
-//        $this->freeeApiGateway->registerAttendance($dto);
+        $stamps = $this->stampRepository->findBy($company_id, $employee_id, $date);
+        $dto = new DailyStampsDto(
+            $employee_id,
+            $company_id,
+            $date,
+            $this->dailyStampsService->getByType($employee_id, $date, $stamps, 1)?->getDateTime(),
+            $this->dailyStampsService->getByType($employee_id, $date, $stamps, 2)?->getDateTime(),
+            $this->dailyStampsService->getByType($employee_id, $date, $stamps, 3)?->getDateTime(),
+            $this->dailyStampsService->getByType($employee_id, $date, $stamps, 4)?->getDateTime(),
+        );
+        $this->freeeApiGateway->registerAttendance($dto);
     }
 }

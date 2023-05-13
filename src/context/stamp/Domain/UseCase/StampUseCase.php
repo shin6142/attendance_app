@@ -4,11 +4,9 @@ namespace AttendanceApp\Src\Context\stamp\Domain\UseCase;
 
 use AttendanceApp\Src\Context\stamp\Domain\Model\Stamp;
 use AttendanceApp\Src\Context\stamp\Domain\Service\DailyStampsService;
-use AttendanceApp\Src\Context\stamp\Infrastructure\Api\SlackApi;
 use AttendanceApp\Src\Context\stamp\Inteface\Gateway\FreeeApiGateway;
 use AttendanceApp\Src\Context\stamp\Inteface\Gateway\SlackAPIGateway;
 use AttendanceApp\Src\Context\stamp\Inteface\Gateway\StampGateway;
-use AttendanceApp\Src\Context\stamp\Inteface\Logger\Log;
 use Exception;
 
 class StampUseCase
@@ -64,16 +62,6 @@ class StampUseCase
         $this->stampRepository->save($stamp);
 
         $this->slackAPIGateway->send($type);
-
-        $array = [
-            "employee_id" => $employee_id,
-            "company_id" => $company_id,
-            "type" => $type,
-            "base_date" => $date,
-            "datetime" => $datetime,
-        ];
-        $json = json_encode($array);
-        Log::logInfo($json, 'ATTENDANCE');
 
         if ($type === 4) {
             $this->recordAttendanceOnFreee($company_id, $employee_id, $date);

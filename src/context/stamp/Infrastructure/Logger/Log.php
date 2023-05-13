@@ -1,15 +1,17 @@
 <?php
 
-namespace AttendanceApp\Src\Context\stamp\Inteface\Logger;
+namespace AttendanceApp\Src\Context\stamp\Infrastructure\Logger;
 
+use AttendanceApp\Src\Context\stamp\Inteface\Logger\LogInterface;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
 use Monolog\Logger;
 
-class Log
+class Log implements LogInterface
 {
     const LOG_FILE_PATH = __DIR__ . '/../../../../../logs/record.log';
+
     public static function logInfo(string $json, string $channelName): void
     {
         // タイムゾーン設定

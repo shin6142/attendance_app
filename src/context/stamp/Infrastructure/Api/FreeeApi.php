@@ -91,12 +91,8 @@ class FreeeApi implements FreeeApiGateway
         $res = $stmt->execute();
         $data = false;
         if ($res) {
-            echo "DB取得に成功しました\n";
             $data = $stmt->fetchAll();
-        } else {
-            echo "DB取得に失敗しました\n";
         }
-
         return $data[0];
     }
 
@@ -154,11 +150,6 @@ class FreeeApi implements FreeeApiGateway
         $stmt->bindParam(':refresh_token', $result["refresh_token"], PDO::PARAM_STR);
         $stmt->bindParam(':scope', $result["scope"], PDO::PARAM_STR);
         $stmt->bindParam(':issued_unix_datetime', $result["created_at"], PDO::PARAM_STR);
-        $res = $stmt->execute();
-        if ($res) {
-            echo "DB登録成功しました\n";
-        } else {
-            echo "DB登録に失敗しました\n";
-        }
+        $stmt->execute();
     }
 }

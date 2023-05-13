@@ -9,6 +9,8 @@ use AttendanceApp\Src\Context\stamp\Domain\Model\Stamps;
 use AttendanceApp\Src\Context\stamp\Domain\Service\DailyStampsService;
 use AttendanceApp\Src\Context\stamp\Domain\UseCase\DailyStampsDto;
 use AttendanceApp\Src\Context\stamp\Domain\UseCase\StampUseCase;
+use AttendanceApp\Src\Context\stamp\Infrastructure\Api\SlackApi;
+use AttendanceApp\Src\Context\stamp\Inteface\Gateway\SlackAPIGateway;
 use AttendanceApp\Src\Context\stamp\Inteface\Gateway\StampGateway;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -25,8 +27,9 @@ class StampUseCaseTest extends TestCase
     public function setUp(): void
     {
         $this->gatewayMock = $this->createMock(StampGateway::class);
+        $this->slackApiMock = $this->createMock(SlackAPIGateway::class);
         $this->service = new DailyStampsService();
-        $this->useCase = new StampUseCase($this->gatewayMock, $this->service);
+        $this->useCase = new StampUseCase($this->gatewayMock, $this->service, $this->slackApiMock);
     }
 
     public function test_getByDate()
@@ -85,6 +88,11 @@ class StampUseCaseTest extends TestCase
             ->method('findBy')
             ->with($companyId, $employeeId, $date)
             ->willReturn($stamps);
+
+        $status = 2;
+        $this->slackApiMock->expects($this->once())
+            ->method('send')
+            ->with($status);
 
         $stamp2 = Stamp::create($companyId, $employeeId, 2, '2023-04-01', '2023-04-01 12:00:00');
         $this->gatewayMock->expects($this->once())

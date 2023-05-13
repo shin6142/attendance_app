@@ -6,6 +6,8 @@ use AttendanceApp\Src\Context\stamp\Domain\Model\Stamp;
 use AttendanceApp\Src\Context\stamp\Domain\Service\DailyStampsService;
 use AttendanceApp\Src\Context\stamp\Infrastructure\Api\FreeeApi;
 use AttendanceApp\Src\Context\stamp\Infrastructure\Api\SlackApi;
+use AttendanceApp\Src\Context\stamp\Inteface\Gateway\FreeeApiGateway;
+use AttendanceApp\Src\Context\stamp\Inteface\Gateway\SlackAPIGateway;
 use AttendanceApp\Src\Context\stamp\Inteface\Gateway\StampGateway;
 use AttendanceApp\Src\Context\stamp\Inteface\Logger\Log;
 use Exception;
@@ -15,7 +17,8 @@ class StampUseCase
 
     public function __construct(
         private readonly StampGateway       $stampRepository,
-        private readonly DailyStampsService $dailyStampsService
+        private readonly DailyStampsService $dailyStampsService,
+        private readonly slackApiGateway $slackAPIGateway
     )
     {
     }
@@ -61,7 +64,9 @@ class StampUseCase
         $this->stampRepository->save($stamp);
 
         $slackApi = new SlackApi();
-        $slackApi->sendMessage($type);
+        $slackApi->send($type);
+
+        $this->slackAPIGateway->send($type);
 
         $array = [
             "employee_id" => $employee_id,
@@ -84,7 +89,8 @@ class StampUseCase
     private function recordAttendanceOnFreee(int $company_id, int $employee_id, string $base_date): void
     {
         $dto = $this->getByDate($company_id, $employee_id, $base_date);
-        $freeeApi = new FreeeApi();
+        $freeeApi = new freeeApi();
         $freeeApi->registerAttendance($dto);
+//        $this->freeeApiGateway->registerAttendance($dto);
     }
 }

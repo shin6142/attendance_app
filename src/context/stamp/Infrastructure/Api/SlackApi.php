@@ -20,12 +20,19 @@ class SlackApi implements SlackAPIGateway
         $this->channelId = $_ENV['CHANNEL_DEV_ATTENDANCE'];
     }
 
-    /**
-     * @param int $status
-     * @return void
-     * @throws Exception
-     */
-    public function sendMessage(int $status): void
+    private function message(int $status): string
+    {
+        $statusArr = [
+            0 => "テスト打刻です",
+            1 => "開始します。",
+            2 => "離席します。",
+            3 => "戻ります。",
+            4 => "終了します。"
+        ];
+        return $statusArr[$status];
+    }
+
+    public function send(int $status): void
     {
         //POSTデータ
         $params = http_build_query(
@@ -50,17 +57,5 @@ class SlackApi implements SlackAPIGateway
         if (!$result["ok"]) {
             throw new Exception('スラック投稿に失敗しました');
         }
-    }
-
-    private function message(int $status): string
-    {
-        $statusArr = [
-            0 => "テスト打刻です",
-            1 => "開始します。",
-            2 => "離席します。",
-            3 => "戻ります。",
-            4 => "終了します。"
-        ];
-        return $statusArr[$status];
     }
 }

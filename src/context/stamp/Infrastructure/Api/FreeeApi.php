@@ -124,7 +124,6 @@ class FreeeApi implements FreeeApiGateway
         $response = curl_exec($curl);
         $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
         $body = substr($response, $header_size);
-        var_dump($body);
         $result = json_decode($body, true);
 
         $dsn = 'mysql:dbname=' . $_ENV['MYSQL_DATABASE'] . ';host=mysql';

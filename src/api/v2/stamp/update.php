@@ -24,7 +24,6 @@ try {
     );
     $controller->record($request);
     $result['success'] = true;
-    header("HTTP/1.1 200 OK");
 } catch (InvalidArgumentException $e) {
     $result['error']['exception'] = $e->getMessage();
     header('HTTP', true, 400);

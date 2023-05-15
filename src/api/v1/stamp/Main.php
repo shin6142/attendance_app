@@ -73,7 +73,7 @@ class Main
         //POSTデータ
         $params = http_build_query(
             [
-                'channel' => $_ENV['CHANNEL_TIMES_YAMAGA'],
+                'channel' => $_ENV['CHANNEL_DEV_ATTENDANCE'],
                 'text' => $statusArr[$type]
             ]
         );

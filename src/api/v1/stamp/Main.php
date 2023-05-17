@@ -174,31 +174,31 @@ class Main
 
         $res = $stmt->execute();
         $data = [];
-        $result = [];
+        $resultArr = [];
         if ($res) {
             $data = $stmt->fetchAll();
         }
-        $result['employee_id'] = $data[0]['employee_id'];
-        $result['company_id'] = $data[0]['company_id'];
-        $result['base_date'] = $data[0]['base_date'];
+        $resultArr['employee_id'] = $data[0]['employee_id'];
+        $resultArr['company_id'] = $data[0]['company_id'];
+        $resultArr['base_date'] = $data[0]['base_date'];
 
         foreach ($data as $d) {
             $type = $d['type'];
             switch ($type) {
                 case 1:
-                    $result['start_datetime'] = $d['datetime'];
+                    $resultArr['start_datetime'] = $d['datetime'];
                     break;
                 case 2:
-                    $result['leave_datetime'] = $d['datetime'];
+                    $resultArr['leave_datetime'] = $d['datetime'];
                     break;
                 case 3:
-                    $result['back_datetime'] = $d['datetime'];
+                    $resultArr['back_datetime'] = $d['datetime'];
                     break;
                 case 4:
-                    $result['end_datetime'] = $d['datetime'];
+                    $resultArr['end_datetime'] = $d['datetime'];
             }
         }
 
-        return $result;
+        return $resultArr;
     }
 }

@@ -19,4 +19,16 @@ class Stamps
         return $this->stamps;
     }
 
+    public function filterByEmployeeId(): self
+    {
+        //TODO: 実装
+        return new self([]);
+    }
+
+    public function filterByDate(): self
+    {
+        //TODO: 実装
+        return new self([]);
+    }
+
 }

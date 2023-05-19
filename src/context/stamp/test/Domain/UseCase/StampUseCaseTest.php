@@ -9,7 +9,6 @@ use AttendanceApp\Src\Context\stamp\Domain\Model\Stamps;
 use AttendanceApp\Src\Context\stamp\Domain\Service\DailyStampsService;
 use AttendanceApp\Src\Context\stamp\Domain\UseCase\DailyStampsDto;
 use AttendanceApp\Src\Context\stamp\Domain\UseCase\StampUseCase;
-use AttendanceApp\Src\Context\stamp\Infrastructure\Api\SlackApi;
 use AttendanceApp\Src\Context\stamp\Inteface\Gateway\FreeeApiGateway;
 use AttendanceApp\Src\Context\stamp\Inteface\Gateway\SlackAPIGateway;
 use AttendanceApp\Src\Context\stamp\Inteface\Gateway\StampGateway;

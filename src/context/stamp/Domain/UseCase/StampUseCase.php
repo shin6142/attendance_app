@@ -2,6 +2,8 @@
 
 namespace AttendanceApp\Src\Context\stamp\Domain\UseCase;
 
+use AttendanceApp\Src\Context\stamp\Domain\Model\ClockInHistory;
+use AttendanceApp\Src\Context\stamp\Domain\Model\Employee;
 use AttendanceApp\Src\Context\stamp\Domain\Model\Stamp;
 use AttendanceApp\Src\Context\stamp\Domain\Service\DailyStampsService;
 use AttendanceApp\Src\Context\stamp\Inteface\Gateway\FreeeApiGateway;
@@ -53,14 +55,11 @@ class StampUseCase
     public function record(int $company_id, int $employee_id, string $date, string $datetime): void
     {
         $stamps = $this->stampRepository->findBy($company_id, $employee_id, $date);
-        $lastStatus = $this->dailyStampsService->lastStatus($employee_id, $date, $stamps);
-        $type = $lastStatus + 1;
-        if ($type > 4) {
-            return;
-        }
-        $stamp = Stamp::create($company_id, $employee_id, $type, $date, $datetime);
+        $history = ClockInHistory::create($employee_id, $stamps);
+        $employee = new Employee(1);
+        $stamp = $employee->clockIn($company_id, $date, $datetime, $history);
         $this->stampRepository->save($stamp);
-
+        $type = $stamp->getType();
         $this->slackAPIGateway->send($type);
 
         if ($type === 4) {

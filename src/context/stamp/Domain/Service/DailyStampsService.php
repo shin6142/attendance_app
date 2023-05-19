@@ -20,19 +20,6 @@ class DailyStampsService
         return null;
     }
 
-    public function lastStatus(int $employeeId, string $date, Stamps $stamps): int
-    {
-        $this->validate($employeeId, $date, $stamps);
-        $lastStatus = 0;
-        foreach ($stamps->getStamps() as $stamp) {
-            $type = $stamp->getType();
-            if ($lastStatus < $type) {
-                $lastStatus = $type;
-            }
-        }
-        return $lastStatus;
-    }
-
     private function validate(int $employeeId, string $date, Stamps $stamps): void
     {
         $type = 0;

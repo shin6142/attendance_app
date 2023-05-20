@@ -55,7 +55,9 @@ class StampUseCase
     public function record(int $company_id, int $employee_id, string $date, string $datetime): void
     {
         $stamps = $this->stampRepository->findBy($company_id, $employee_id, $date);
-        $history = ClockInHistory::create($employee_id, $stamps);
+        $stampsFiltered = $stamps->filterByDate($date)->filterByEmployeeId($employee_id);
+
+        $history = ClockInHistory::create($employee_id, $stampsFiltered);
         $employee = new Employee(1);
         $stamp = $employee->clockIn($company_id, $date, $datetime, $history);
         $this->stampRepository->save($stamp);

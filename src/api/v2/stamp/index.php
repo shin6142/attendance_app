@@ -28,7 +28,7 @@ try {
     $result['success'] = true;
     header("HTTP/1.1 200 OK");
 } catch (InvalidArgumentException $e){
-    $result['error']['exception'] = $e->getMessage();
+   $result['error']['exception'] = $e->getMessage();
     header('HTTP', true, 400);
 }catch (Exception $e) {
     header('HTTP/1.1 500 Internal Server Error');

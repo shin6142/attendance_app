@@ -6,7 +6,6 @@ require_once(__DIR__ . "/../../../../../../vendor/autoload.php");
 
 use AttendanceApp\Src\Context\stamp\Domain\Model\Stamp;
 use AttendanceApp\Src\Context\stamp\Domain\Model\Stamps;
-use AttendanceApp\Src\Context\stamp\Domain\Service\DailyStampsService;
 use AttendanceApp\Src\Context\stamp\Domain\UseCase\DailyStampsDto;
 use AttendanceApp\Src\Context\stamp\Domain\UseCase\StampUseCase;
 use AttendanceApp\Src\Context\stamp\Inteface\Gateway\FreeeApiGateway;
@@ -29,8 +28,7 @@ class StampUseCaseTest extends TestCase
         $this->gatewayMock = $this->createMock(StampGateway::class);
         $this->slackApiMock = $this->createMock(SlackAPIGateway::class);
         $this->freeeApiMock = $this->createMock(FreeeApiGateway::class);
-        $this->service = new DailyStampsService();
-        $this->useCase = new StampUseCase($this->gatewayMock, $this->service, $this->slackApiMock, $this->freeeApiMock);
+        $this->useCase = new StampUseCase($this->gatewayMock, $this->slackApiMock, $this->freeeApiMock);
     }
 
     public function test_getByDate()

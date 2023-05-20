@@ -7,16 +7,17 @@ use InvalidArgumentException;
 class ClockInHistory
 {
     private function __construct(
-        private readonly int $employeeId,
+        private readonly int    $employeeId,
+        private readonly int    $companyId,
         private readonly Stamps $stamps
     )
     {
     }
 
-    public static function create(int $employeeId, Stamps $stamps)
+    public static function create(int $employeeId, int $companyId, Stamps $stamps): self
     {
-        self::validate($employeeId, $stamps);
-        return new self($employeeId, $stamps);
+        self::validate($employeeId, $companyId, $stamps);
+        return new self($employeeId, $companyId, $stamps);
     }
 
     public function getStamps(): Stamps
@@ -28,6 +29,17 @@ class ClockInHistory
     {
         return $this->employeeId;
     }
+
+    public function getByType(int $type): null|Stamp
+    {
+        foreach ($this->stamps->getStamps() as $stamp) {
+            if ($type == $stamp->getType()) {
+                return $stamp;
+            }
+        }
+        return null;
+    }
+
 
     public function lastType(): int
     {
@@ -46,10 +58,14 @@ class ClockInHistory
         return 1 + $this->lastType();
     }
 
-    private static function validate(int $employeeId, Stamps $stamps): void
+    private static function validate(int $employeeId, int $companyId, Stamps $stamps): void
     {
         $type = 0;
         foreach ($stamps->getStamps() as $stamp) {
+            if ($companyId != $stamp->getCompanyId()) {
+                throw new InvalidArgumentException('会社IDと処理対象の打刻情報が一致しません');
+            }
+
             if ($employeeId != $stamp->getEmployeeId()) {
                 throw new InvalidArgumentException('従業員IDと処理対象の打刻情報が一致しません');
             }

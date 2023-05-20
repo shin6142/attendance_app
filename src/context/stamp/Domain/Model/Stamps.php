@@ -19,16 +19,20 @@ class Stamps
         return $this->stamps;
     }
 
-    public function filterByEmployeeId(): self
+    public function filterByEmployeeId(int $id): self
     {
-        //TODO: 実装
-        return new self([]);
+        $filtered = array_filter($this->stamps, function ($stamp) use ($id) {
+            return $stamp->getEmployeeId() == $id;
+        });
+        return new self(array_values($filtered));
     }
 
-    public function filterByDate(): self
+    public function filterByDate(string $date): self
     {
-        //TODO: 実装
-        return new self([]);
+        $filtered = array_filter($this->stamps, function ($stamp) use ($date) {
+            return $stamp->getDate() == $date;
+        });
+        return new self(array_values($filtered));
     }
 
 }

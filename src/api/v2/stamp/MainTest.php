@@ -25,5 +25,4 @@ class MainTest extends TestCase
 
         $this->assertEquals($expected, $actual);
     }
-
 }

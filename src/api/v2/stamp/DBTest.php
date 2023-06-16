@@ -10,10 +10,11 @@ class DBTest extends TestCase
 
   public function test_connectionDB()
   {
-    $records = DB::select(1884310, 1164735, "2023-04-30");
+    $db = new DB();
+    $records = $db->select(1884310, 1164735, "2023-04-30");
 
     $actual = count($records);
 
-    $this->assertEquals(4, $actual);
+    $this->assertEquals(7, $actual);
   }
 }

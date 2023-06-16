@@ -11,7 +11,7 @@ class DB implements Repository
   /**
    * @throws Exception
    */
-  public static function select($company_id, $employee_id, $base_date)
+  public function select($company_id, $employee_id, $base_date)
   {
     $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . "/../../../../");
     $dotenv->load();
@@ -36,7 +36,29 @@ class DB implements Repository
     if ($res) {
       $data = $stmt->fetchAll();
     }
-    return $data;
+
+      $resultArr['employee_id'] = $data[0]['employee_id'];
+      $resultArr['company_id'] = $data[0]['company_id'];
+      $resultArr['base_date'] = $data[0]['base_date'];
+
+      foreach ($data as $d) {
+          $type = $d['type'];
+          switch ($type) {
+              case 1:
+                  $resultArr['start_datetime'] = $d['datetime'];
+                  break;
+              case 2:
+                  $resultArr['leave_datetime'] = $d['datetime'];
+                  break;
+              case 3:
+                  $resultArr['back_datetime'] = $d['datetime'];
+                  break;
+              case 4:
+                  $resultArr['end_datetime'] = $d['datetime'];
+          }
+      }
+
+      return $resultArr;
   }
 
 }

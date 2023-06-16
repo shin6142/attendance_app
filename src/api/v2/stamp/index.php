@@ -10,8 +10,9 @@ try {
     $employee_id = $_REQUEST['employee_id'];
     $base_date = $_REQUEST['base_date'];
 
-    DB::select($company_id, $employee_id, $base_date);
-    $resultArr = Main::makeHandle($company_id, $employee_id, $base_date);
+    $db = new DB();
+    $main = new Main($db);
+    $resultArr = $main->makeHandle($company_id, $employee_id, $base_date);
 
     $result["content"] = $resultArr;
     $result['success'] = true;

@@ -2,5 +2,5 @@
 
 interface Repository
 {
-  public static function select($company_id, $employee_id, $base_date);
+  public function select($company_id, $employee_id, $base_date);
 }

@@ -3,6 +3,7 @@
 require_once(__DIR__ . "/../../../../vendor/autoload.php");
 // require_once("/vendor/autoload.php");
 require_once(__DIR__ . "/Main.php");
+require_once(__DIR__ . "/DB.php");
 
 use PHPUnit\Framework\TestCase;
 
@@ -12,7 +13,9 @@ class MainTest extends TestCase
 
     public function test_makeHandle()
     {
-        $actual = Main::makeHandle(1884310, 1164735, "2023-04-30");
+        $db = new DB();
+        $main = new Main($db);
+        $actual = $main->makeHandle(1884310, 1164735, "2023-04-30");
         $expected = array(
             'employee_id' => 1164735,
             'company_id' => 1884310,

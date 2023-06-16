@@ -3,3 +3,4 @@ vendor/
 data.txt
 logs/*
 .idea/*
+.vscode/*

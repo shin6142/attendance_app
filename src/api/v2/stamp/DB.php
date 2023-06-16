@@ -1,7 +1,13 @@
 <?php
+require_once(__DIR__ . "/Repository.php");
 
-class DB
+class DB implements Repository
 {
+  public function __construct()
+  {
+
+  }
+
   /**
    * @throws Exception
    */

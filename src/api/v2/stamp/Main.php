@@ -1,6 +1,8 @@
 <?php declare(strict_types=1);
 
 require_once(__DIR__ . "/../../../../vendor/autoload.php");
+require_once(__DIR__ . "/DB.php");
+require_once(__DIR__ . "/Repository.php");
 
 use Monolog\Level;
 use Monolog\Logger;
@@ -10,13 +12,16 @@ use Monolog\Handler\StreamHandler;
 
 class Main
 {
+  public function __construct(private readonly Repository $repository)
+  {
 
+  }
     public static function mainFunc(): int
     {
         return 1;
     }
 
-    public static function makeHandle($company_id, $employee_id, $base_date): array
+    public function makeHandle($company_id, $employee_id, $base_date): array
     {
         if (!isset($company_id)) {
             throw new Exception('会社IDを指定してください');
@@ -28,29 +33,8 @@ class Main
             throw new Exception('打刻日を指定してください');
         }
 
-        $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . "/../../../../");
-        $dotenv->load();
+        $data = $this->repository->select($company_id, $employee_id, $base_date);
 
-        $dsn = 'mysql:dbname=' . $_ENV['MYSQL_DATABASE'] . ';host=mysql';
-        $user = $_ENV['MYSQL_USER'];
-        $password = $_ENV['MYSQL_PASSWORD'];
-        try {
-            $pdo = new PDO($dsn, $user, $password);
-        } catch (PDOException $e) {
-            throw new Exception($e->getMessage());
-        }
-
-        $stmt = $pdo->prepare("SELECT * FROM attendance WHERE company_id = :company_id AND employee_id = :employee_id AND base_date = :base_date ORDER BY type");
-        $stmt->bindParam(':company_id', $company_id, PDO::PARAM_STR);
-        $stmt->bindParam(':employee_id', $employee_id, PDO::PARAM_STR);
-        $stmt->bindParam(':base_date', $base_date, PDO::PARAM_STR);
-
-        $res = $stmt->execute();
-        $data = [];
-        $resultArr = [];
-        if ($res) {
-            $data = $stmt->fetchAll();
-        }
         $resultArr['employee_id'] = $data[0]['employee_id'];
         $resultArr['company_id'] = $data[0]['company_id'];
         $resultArr['base_date'] = $data[0]['base_date'];

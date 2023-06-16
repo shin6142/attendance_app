@@ -6,7 +6,7 @@
         "request": "launch",
         "port": 9000,
         "pathMappings": {
-          "/var/www/html": "/Users/yamaga/attendance_app"
+          "/var/www/html": "/Users/t_fujimura/Dev/attendance_app"
         }
       }
     ]

@@ -5,7 +5,7 @@ class DB
   /**
    * @throws Exception
    */
-  public static function connectionDB($company_id, $employee_id, $base_date)
+  public static function select($company_id, $employee_id, $base_date)
   {
     $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . "/../../../../");
     $dotenv->load();
@@ -27,11 +27,9 @@ class DB
 
     $res = $stmt->execute();
     $data = [];
-    $resultArr = [];
     if ($res) {
       $data = $stmt->fetchAll();
     }
-    var_dump($data);
     return $data;
   }
 

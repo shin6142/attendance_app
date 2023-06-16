@@ -10,7 +10,7 @@ try {
     $employee_id = $_REQUEST['employee_id'];
     $base_date = $_REQUEST['base_date'];
 
-    DB::connectionDB($company_id, $employee_id, $base_date);
+    DB::select($company_id, $employee_id, $base_date);
     $resultArr = Main::makeHandle($company_id, $employee_id, $base_date);
 
     $result["content"] = $resultArr;

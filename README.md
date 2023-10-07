@@ -35,3 +35,7 @@ phpunitを実行します
 ```
 vendor/bin/phpunit src/api/v1/stamp/MainTest.php
 ```
+
+# アプリケーション構成
+![DEV_山家 - Frame 2](https://github.com/shin6142/attendance_app/assets/62780815/5db72b4a-d576-4492-8e4e-11c5a86207ac)
+
